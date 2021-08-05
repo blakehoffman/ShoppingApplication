@@ -4,8 +4,8 @@
 	ClusterId				int					NOT NULL IDENTITY UNIQUE,
 	[Name]					varchar(100)		NOT NULL,
 	Amount					int					NOT NULL,
-	[SysStartTime]			datetime2			GENERATED ALWAYS AS ROW START NOT NULL,
-	[SysEndTime]			datetime2			GENERATED ALWAYS AS ROW END   NOT NULL,
+	SysStartTime			datetime2			GENERATED ALWAYS AS ROW START NOT NULL,
+	SysEndTime				datetime2			GENERATED ALWAYS AS ROW END NOT NULL,
 	PERIOD FOR SYSTEM_TIME (SysStartTime, SysEndTime),
 	CONSTRAINT pkDiscounts PRIMARY KEY NONCLUSTERED (Id),
 	INDEX ixDiscountsClusterId CLUSTERED (ClusterId)

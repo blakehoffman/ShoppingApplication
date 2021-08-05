@@ -58,9 +58,27 @@
     <Folder Include="Properties" />
     <Folder Include="Tables" />
     <Folder Include="Tables\Discounts" />
+    <Folder Include="Tables\Orders" />
+    <Folder Include="Tables\Products" />
+    <Folder Include="Tables\Categories" />
+    <Folder Include="Tables\OrderProducts" />
+    <Folder Include="Tables\Carts" />
+    <Folder Include="Tables\CartProducts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Discounts\Discounts.sql" />
     <Build Include="Tables\Discounts\DiscountsHistory.sql" />
+    <Build Include="Tables\Orders\Orders.sql" />
+    <Build Include="Tables\Orders\OrdersHistory.sql" />
+    <Build Include="Tables\Products\Products.sql" />
+    <Build Include="Tables\Categories\Categories.sql" />
+    <Build Include="Tables\Categories\CategoriesHistory.sql" />
+    <Build Include="Tables\Products\ProductsHistory.sql" />
+    <Build Include="Tables\OrderProducts\OrderProducts.sql" />
+    <Build Include="Tables\OrderProducts\OrderProductsHistory.sql" />
+    <Build Include="Tables\Carts\Carts.sql" />
+    <Build Include="Tables\Carts\CartsHistory.sql" />
+    <Build Include="Tables\CartProducts\CartProducts.sql" />
+    <Build Include="Tables\CartProducts\CartProductsHistory.sql" />
   </ItemGroup>
 </Project>
