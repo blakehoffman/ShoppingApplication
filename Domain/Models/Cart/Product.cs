@@ -4,12 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Models.Order
+namespace Domain.Models.Cart
 {
     public class Product
     {
         public Product(Guid id, string name, int price, int quantity)
         {
+            if (id == Guid.Empty)
+            {
+                throw new ArgumentNullException("id cannot be empty");
+            }
+
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentNullException("name cannot be null or empty");
+            }
+
             Id = id;
             Name = name;
             Price = price;

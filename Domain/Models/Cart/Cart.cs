@@ -5,35 +5,35 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Models.Order
+namespace Domain.Models.Cart
 {
-    public class Order
+    public class Cart
     {
-        private readonly double? _discount;
         private List<Product> _products = new List<Product>();
 
-        public Order(Guid id, Guid userId, DateTimeOffset dateTime, double? discount)
+        public Cart(Guid id, Guid userId, DateTimeOffset dateCreated)
         {
             if (id == Guid.Empty)
             {
-                throw new ArgumentException("Id cannot be empty");
+                throw new ArgumentNullException("id cannot empty");
             }
 
             if (userId == Guid.Empty)
             {
-                throw new ArgumentException("UserId cannot be empty");
+                throw new ArgumentNullException("userId cannot be empty");
             }
 
             Id = id;
             UserId = userId;
-            DateTime = dateTime;
-            _discount = discount;
+            DateCreated = dateCreated;
         }
 
         public Guid Id { get; }
         public Guid UserId { get; }
-        public DateTimeOffset DateTime { get; }
+        public DateTimeOffset DateCreated { get; }
+        public bool Purchased { get; private set; }
         public IReadOnlyCollection<Product> Products => _products.AsReadOnly();
+        public int GetTotal => _products.Sum(p => p.Price * p.Quantity);
 
         public void AddItem(Product product)
         {
@@ -54,16 +54,19 @@ namespace Domain.Models.Order
             }
         }
 
-        public double GetTotal()
+        public void RemoveItem(Product product)
         {
-            var productTotal = Products.Sum(p => p.Price * p.Quantity);
-
-            if (_discount != null)
+            if (product == null)
             {
-                return productTotal * (double)_discount;
+                return;
             }
 
-            return productTotal;
+            var productToRemove = _products.Where(p => p.Id == product.Id).First();
+
+            if (productToRemove != null)
+            {
+                _products.Remove(productToRemove);
+            }
         }
     }
 }
