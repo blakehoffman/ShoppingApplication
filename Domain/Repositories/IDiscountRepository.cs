@@ -10,7 +10,7 @@ namespace Domain.Repositories
     public interface IDiscountRepository
     {
         public void Add(Discount discount);
-        public Discount Find(Guid id);
+        public Discount? Find(Guid id);
         public List<Discount> GetAll();
     }
 }

@@ -1,28 +1,58 @@
-﻿using Domain.Models.Discount;
+﻿using AutoMapper;
+using Dapper;
+using Domain.Models.Discount;
 using Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Infrastructure.Records;
+using System.Data.SqlClient;
 
 namespace Infrastructure.Repositories
 {
     public class DiscountRepository : IDiscountRepository
     {
-        public void Add(Discount discount)
-        {
+        private readonly string _connectionString;
+        private readonly IMapper _mapper;
 
+        public DiscountRepository(string connectionString, IMapper mapper)
+        {
+            _connectionString = connectionString;
+            _mapper = mapper;
         }
 
-        public Discount Find(Guid id)
+        public void Add(Discount discount)
         {
-            return null;
+            var storedProc = "InsertDiscount";
+            var discountRecord = _mapper.Map<DiscountRecord>(discount);
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Execute(storedProc, discountRecord);
+            }
+        }
+
+        public Discount? Find(Guid id)
+        {
+            var storedProc = "GetDiscount";
+            DiscountRecord? result;
+
+            using ( var connection = new SqlConnection(_connectionString))
+            {
+                result = connection.Query<DiscountRecord>(storedProc, id).FirstOrDefault();
+            }
+
+            return _mapper.Map<Discount?>(result);
         }
 
         public List<Discount> GetAll()
         {
-            return new List<Discount>();
+            var storedProc = "GetDiscounts";
+            List<DiscountRecord> result;
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                result = connection.Query<DiscountRecord>(storedProc).ToList();
+            }
+
+            return _mapper.Map<List<Discount>>(result);
         }
     }
 }
