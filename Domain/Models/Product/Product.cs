@@ -57,7 +57,7 @@ namespace Domain.Models.Product
         public string Description { get; private set; }
         public Guid CategoryId { get; }
 
-        public int Price {  get; private set; }
+        public int Price { get; private set; }
 
         public void ChangePrice(int newPrice)
         {
