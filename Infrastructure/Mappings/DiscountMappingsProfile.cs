@@ -13,8 +13,8 @@ namespace Infrastructure.Mappings
     {
         public DiscountMappingsProfile()
         {
-            CreateMap<DiscountRecord?, Discount?>();
             CreateMap<Discount, DiscountRecord>();
+            CreateMap<DiscountRecord?, Discount?>();
             CreateMap<List<DiscountRecord>, List<Discount>>();
         }
     }

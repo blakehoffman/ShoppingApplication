@@ -10,7 +10,7 @@ namespace Domain.Repositories
     public interface IOrderRepository
     {
         public void Add(Order order);
-        public Order Find(Guid id);
+        public Order? Find(Guid id);
         public List<Order> GetAll();
     }
 }

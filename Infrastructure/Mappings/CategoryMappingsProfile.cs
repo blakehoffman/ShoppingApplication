@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Domain.Models.Categories;
+using Infrastructure.Records;
 
 namespace Infrastructure.Mappings
 {
@@ -11,7 +8,9 @@ namespace Infrastructure.Mappings
     {
         public CategoryMappingsProfile()
         {
-
+            CreateMap<Category, CategoryRecord>();
+            CreateMap<CategoryRecord?, Category>();
+            CreateMap<List<CategoryRecord>, List<Category>>();
         }
     }
 }

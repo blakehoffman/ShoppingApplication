@@ -32,14 +32,14 @@ namespace Infrastructure.Repositories
         public List<Category> GetAll(Guid parentId)
         {
             var storedProc = "GetCategories";
-            List<CategoryRecord> result;
+            List<CategoryRecord> categoryRecords;
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                result = connection.Query<CategoryRecord>(storedProc, parentId).ToList();
+                categoryRecords = connection.Query<CategoryRecord>(storedProc, parentId).ToList();
             }
 
-            return _mapper.Map<List<Category>>(result);
+            return _mapper.Map<List<Category>>(categoryRecords);
         }
     }
 }

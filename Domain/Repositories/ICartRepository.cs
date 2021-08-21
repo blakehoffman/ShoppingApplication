@@ -10,6 +10,6 @@ namespace Domain.Repositories
     public interface ICartRepository
     {
         public void Add(Cart cart);
-        public void FindCart(Guid guid);
+        public Cart? Find(Guid guid);
     }
 }

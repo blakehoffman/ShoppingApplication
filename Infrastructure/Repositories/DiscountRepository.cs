@@ -32,27 +32,27 @@ namespace Infrastructure.Repositories
         public Discount? Find(Guid id)
         {
             var storedProc = "GetDiscount";
-            DiscountRecord? result;
+            DiscountRecord? discountRecord;
 
             using ( var connection = new SqlConnection(_connectionString))
             {
-                result = connection.Query<DiscountRecord>(storedProc, id).FirstOrDefault();
+                discountRecord = connection.Query<DiscountRecord>(storedProc, id).FirstOrDefault();
             }
 
-            return _mapper.Map<Discount?>(result);
+            return _mapper.Map<Discount?>(discountRecord);
         }
 
         public List<Discount> GetAll()
         {
             var storedProc = "GetDiscounts";
-            List<DiscountRecord> result;
+            List<DiscountRecord> discountRecords;
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                result = connection.Query<DiscountRecord>(storedProc).ToList();
+                discountRecords = connection.Query<DiscountRecord>(storedProc).ToList();
             }
 
-            return _mapper.Map<List<Discount>>(result);
+            return _mapper.Map<List<Discount>>(discountRecords);
         }
     }
 }
