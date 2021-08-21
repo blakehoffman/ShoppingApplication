@@ -64,6 +64,7 @@
     <Folder Include="Tables\OrderProducts" />
     <Folder Include="Tables\Carts" />
     <Folder Include="Tables\CartProducts" />
+    <Folder Include="Stored Procedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Discounts\Discounts.sql" />
@@ -80,5 +81,20 @@
     <Build Include="Tables\Carts\CartsHistory.sql" />
     <Build Include="Tables\CartProducts\CartProducts.sql" />
     <Build Include="Tables\CartProducts\CartProductsHistory.sql" />
+    <Build Include="Stored Procedures\InsertDiscount.sql" />
+    <Build Include="Stored Procedures\GetDiscounts.sql" />
+    <Build Include="Stored Procedures\InsertCategory.sql" />
+    <Build Include="Stored Procedures\GetNextChildHidFromParent.sql" />
+    <Build Include="Stored Procedures\GetCategories.sql" />
+    <Build Include="Stored Procedures\InsertCart.sql" />
+    <Build Include="Stored Procedures\InsertCartProduct.sql" />
+    <Build Include="Stored Procedures\GetCart.sql" />
+    <Build Include="Stored Procedures\GetCartProducts.sql" />
+    <Build Include="Stored Procedures\InsertProduct.sql" />
+    <Build Include="Stored Procedures\GetProduct.sql" />
+    <Build Include="Stored Procedures\InsertOrder.sql" />
+    <Build Include="Stored Procedures\InsertOrderProduct.sql" />
+    <Build Include="Stored Procedures\GetOrder.sql" />
+    <Build Include="Stored Procedures\GetOrderProducts.sql" />
   </ItemGroup>
 </Project>

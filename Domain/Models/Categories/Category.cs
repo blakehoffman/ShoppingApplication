@@ -8,7 +8,7 @@ namespace Domain.Models.Categories
 {
     public class Category
     {
-        public Category(Guid id, string name)
+        public Category(Guid id, string name, Guid parentId)
         {
             if (id == Guid.Empty)
             {
@@ -27,9 +27,11 @@ namespace Domain.Models.Categories
 
             Id = id;
             Name = name;
+            ParentId = parentId;
         }
 
         public Guid Id { get; }
         public string Name { get; }
+        public Guid ParentId { get; }
     }
 }
