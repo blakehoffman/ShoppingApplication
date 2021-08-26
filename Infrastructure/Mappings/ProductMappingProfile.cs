@@ -15,7 +15,7 @@ namespace Infrastructure.Mappings
         {
             CreateMap<List<ProductRecord>, List<Product>>();
             CreateMap<Product, ProductRecord>();
-            CreateMap<ProductRecord, Product>();
+            CreateMap<ProductRecord?, Product?>();
         }
     }
 }

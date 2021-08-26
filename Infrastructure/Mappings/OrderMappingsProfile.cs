@@ -16,7 +16,7 @@ namespace Infrastructure.Mappings
             CreateMap<Order, OrderRecord>();
             CreateMap<List<OrderProductRecord>, Order>()
                 .ForMember(order => order.Products, opt => opt.MapFrom(orderProductRecords => orderProductRecords));
-            CreateMap<OrderRecord, Order>();
+            CreateMap<OrderRecord?, Order?>();
             CreateMap<Product, OrderProductRecord>();
         }
     }

@@ -22,7 +22,7 @@ namespace Tests.Domain.Models.OrderTests
         }
 
         [Fact]
-        public void AddItem_DuplicateProduct()
+        public void AddItem_DuplicateProduct_NotAdded()
         {
             var product = new Product(Guid.NewGuid(), "test name", 5, 1);
             var productTwo = new Product(Guid.NewGuid(), "test name", 3, 1);
@@ -40,7 +40,7 @@ namespace Tests.Domain.Models.OrderTests
         }
 
         [Fact]
-        public void AddItem_NullProduct()
+        public void AddItem_NullProduct_NotAdded()
         {
             Product product = null;
             var order = new Order(Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now, null);

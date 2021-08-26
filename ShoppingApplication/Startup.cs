@@ -1,3 +1,9 @@
+using Application.Mapping;
+using Application.Services;
+using Application.Services.Interfaces;
+using AutoMapper;
+using Domain.Repositories;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -29,6 +35,20 @@ namespace ShoppingApplication
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var autoMapperConfig = new MapperConfiguration(config =>
+            {
+                config.AddMaps(new[] {
+                    "Application",
+                    "Infrastructure"
+                });
+            });
+            services.AddSingleton(autoMapperConfig.CreateMapper());
+
+            services.AddScoped<ICategoryService, CategoryService>();
+
+            services.AddScoped<ICategoryRepository>(services =>
+                new CategoryRepository(Configuration.GetConnectionString("DefaultConnection"), services.GetService<IMapper>()));
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
 

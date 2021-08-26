@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.0.31521.260
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "ShoppingApplication\Application.csproj", "{547516EA-E59F-4CD1-8180-630C8416A4B0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B2B2D8F3-F2E0-45CA-BD3B-22668AD2102C} = {B2B2D8F3-F2E0-45CA-BD3B-22668AD2102C}
+	EndProjectSection
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Database", "Database\Database.sqlproj", "{D58E892F-9045-405E-89BC-7AD729FCD2E5}"
 EndProject
@@ -11,7 +14,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{29800C31-D771-4CE4-BFD5-0E546FA98807}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{6461CF47-CD83-4DEA-B825-1BBB228A8927}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{6461CF47-CD83-4DEA-B825-1BBB228A8927}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -3,7 +3,10 @@ using Dapper;
 using Domain.Models.Order;
 using Domain.Repositories;
 using Infrastructure.Records;
+using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace Infrastructure.Repositories
 {
