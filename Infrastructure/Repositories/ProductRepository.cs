@@ -5,6 +5,7 @@ using Domain.Repositories;
 using Infrastructure.Records;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 
@@ -28,21 +29,26 @@ namespace Infrastructure.Repositories
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                connection.Execute(storedProc, productRecord);
+                connection.Execute(storedProc,
+                    productRecord,
+                    commandType: CommandType.StoredProcedure);
             }
         }
 
-        public Product Find(Guid id)
+        public Product? Find(Guid id)
         {
             var storedProc = "GetProduct";
             ProductRecord? productRecord;
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                productRecord = connection.Query<ProductRecord>(storedProc, id).FirstOrDefault();
+                productRecord = connection.Query<ProductRecord?>(storedProc,
+                    new { id },
+                    commandType: CommandType.StoredProcedure)
+                    .FirstOrDefault();
             }
 
-            return _mapper.Map<Product>(productRecord);
+            return _mapper.Map<Product?>(productRecord);
         }
 
         public List<Product> GetAll()
@@ -52,7 +58,25 @@ namespace Infrastructure.Repositories
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                productRecords = connection.Query<ProductRecord>(storedProc).ToList();
+                productRecords = connection.Query<ProductRecord>(storedProc,
+                    commandType: CommandType.StoredProcedure)
+                    .ToList();
+            }
+
+            return _mapper.Map<List<Product>>(productRecords);
+        }
+
+        public List<Product> GetByCategory(Guid categoryId)
+        {
+            var storedProc = "GetProductsByCategory";
+            List<ProductRecord> productRecords;
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                productRecords = connection.Query<ProductRecord>(storedProc,
+                    new { categoryId },
+                    commandType: CommandType.StoredProcedure)
+                    .ToList();
             }
 
             return _mapper.Map<List<Product>>(productRecords);

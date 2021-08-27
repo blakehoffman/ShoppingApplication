@@ -98,5 +98,7 @@
     <Build Include="Stored Procedures\GetOrderProducts.sql" />
     <Build Include="Stored Procedures\GetCategory.sql" />
     <Build Include="Stored Procedures\GetCategoryByName.sql" />
+    <Build Include="Stored Procedures\GetProducts.sql" />
+    <Build Include="Stored Procedures\GetProductsByCategory.sql" />
   </ItemGroup>
 </Project>

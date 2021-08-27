@@ -2,9 +2,10 @@
 	@Id uniqueidentifier,
 	@Name varchar(100),
 	@Description varchar(300),
-	@CategoryId uniqueidentifier
+	@CategoryId uniqueidentifier,
+	@Price int
 AS
 BEGIN
-	INSERT INTO Products (Id, [Name], [Description], CategoryId)
-	  VALUES (@Id, @Name, @Description, @CategoryId)
+	INSERT INTO Products (Id, [Name], [Description], CategoryId, Price)
+	  VALUES (@Id, @Name, @Description, @CategoryId, @Price)
 END

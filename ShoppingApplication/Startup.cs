@@ -45,9 +45,13 @@ namespace ShoppingApplication
             services.AddSingleton(autoMapperConfig.CreateMapper());
 
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IProductService, ProductService>();
 
             services.AddScoped<ICategoryRepository>(services =>
                 new CategoryRepository(Configuration.GetConnectionString("DefaultConnection"), services.GetService<IMapper>()));
+
+            services.AddScoped<IProductRepository>(services => 
+                new ProductRepository(Configuration.GetConnectionString("DefaultConnection"), services.GetService<IMapper>()));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));

@@ -10,7 +10,8 @@ namespace Domain.Repositories
     public interface IProductRepository
     {
         public void Add(Product product);
-        public Product Find(Guid id);
+        public Product? Find(Guid id);
         public List<Product> GetAll();
+        public List<Product> GetByCategory(Guid categoryId);
     }
 }

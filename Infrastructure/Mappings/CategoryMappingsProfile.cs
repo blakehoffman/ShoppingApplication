@@ -11,7 +11,6 @@ namespace Infrastructure.Mappings
         {
             CreateMap<Category, CategoryRecord>();
             CreateMap<CategoryRecord?, Category?>();
-            CreateMap<CategoryRecord, Category>();
         }
     }
 }

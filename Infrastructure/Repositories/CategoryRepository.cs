@@ -42,7 +42,7 @@ namespace Infrastructure.Repositories
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                categoryRecord = connection.Query<CategoryRecord>(storedProc,
+                categoryRecord = connection.Query<CategoryRecord?>(storedProc,
                     new { id },
                     commandType: CommandType.StoredProcedure)
                     .FirstOrDefault();
@@ -58,7 +58,7 @@ namespace Infrastructure.Repositories
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                categoryRecord = connection.Query<CategoryRecord>(storedProc,
+                categoryRecord = connection.Query<CategoryRecord?>(storedProc,
                     new { name },
                     commandType: CommandType.StoredProcedure)
                     .FirstOrDefault();

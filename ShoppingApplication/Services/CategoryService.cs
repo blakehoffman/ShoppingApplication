@@ -47,26 +47,20 @@ namespace Application.Services
             if (resultDTO.Errors.Count > 0)
             {
                 resultDTO.IsSuccess = false;
-
                 return resultDTO;
             }
 
             var category = new Category(Guid.NewGuid(), categoryDTO.Name, categoryDTO.ParentId);
             _categoryRepository.Add(category);
+            resultDTO.IsSuccess = true;
 
-            return new ResultDTO { IsSuccess = true };
+            return resultDTO;
         }
 
         public CategoryDTO? GetCategory(Guid id)
         {
             var category = _categoryRepository.Find(id);
-            
-            if (category == null)
-            {
-                return null;
-            }
-
-            return _mapper.Map<CategoryDTO>(category);
+            return _mapper.Map<CategoryDTO?>(category);
         }
 
         public List<CategoryDTO> GetCategories(Guid? parentId)

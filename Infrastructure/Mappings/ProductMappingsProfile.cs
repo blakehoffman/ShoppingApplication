@@ -9,11 +9,10 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Mappings
 {
-    public class ProductMappingProfile : Profile
+    public class ProductMappingsProfile : Profile
     {
-        public ProductMappingProfile()
+        public ProductMappingsProfile()
         {
-            CreateMap<List<ProductRecord>, List<Product>>();
             CreateMap<Product, ProductRecord>();
             CreateMap<ProductRecord?, Product?>();
         }

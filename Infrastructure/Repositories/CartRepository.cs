@@ -62,7 +62,7 @@ namespace Infrastructure.Repositories
                 cartProductRecords = connection.Query<CartProductRecord>(storedProc, cartId).ToList();
             }
 
-            var cart = _mapper.Map<Cart>(cartRecord);
+            var cart = _mapper.Map<Cart?>(cartRecord);
             return _mapper.Map(cartProductRecords, cart);
         }
     }

@@ -12,7 +12,7 @@ namespace Application.Mapping
     {
         public CategoryDTOMappingsProfile()
         {
-            CreateMap<Category, CategoryDTO>();
+            CreateMap<Category?, CategoryDTO?>();
         }
     }
 }
