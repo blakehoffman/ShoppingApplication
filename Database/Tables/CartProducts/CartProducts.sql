@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[CartProducts]
 (
 	ClusterId		int					NOT NULL IDENTITY UNIQUE,
-	CartId			uniqueidentifier	NULL,
+	CartId			uniqueidentifier	NOT NULL,
 	ProductId		uniqueidentifier	NOT NULL,
 	Quantity		int					NOT	NULL,
 	SysStartTime	datetime2			GENERATED ALWAYS AS ROW START NOT NULL,
