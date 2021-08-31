@@ -51,6 +51,22 @@ namespace Infrastructure.Repositories
             return _mapper.Map<Product?>(productRecord);
         }
 
+        public Product? FindByName(string name)
+        {
+            var storedProc = "FindProductByName";
+            ProductRecord? productRecord;
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                productRecord = connection.Query<ProductRecord?>(storedProc,
+                    new { name },
+                    commandType: CommandType.StoredProcedure)
+                    .FirstOrDefault();
+            }
+
+            return _mapper.Map<Product?>(productRecord);
+        }
+
         public List<Product> GetAll()
         {
             var storedProc = "GetProducts";

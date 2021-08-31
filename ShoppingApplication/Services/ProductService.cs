@@ -50,6 +50,11 @@ namespace Application.Services
                 resultDTO.Errors.Add("Product price must be above 0");
             }
 
+            if (_productRepository.FindByName(createProductDTO.Name) != null)
+            {
+                resultDTO.Errors.Add("A product with this name already exists");
+            }
+
             if (resultDTO.Errors.Count > 0)
             {
                 resultDTO.IsSuccess = false;

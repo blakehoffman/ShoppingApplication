@@ -5,6 +5,7 @@ using Domain.Repositories;
 using Infrastructure.Records;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 
@@ -28,7 +29,9 @@ namespace Infrastructure.Repositories
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                connection.Execute(storedProc, discountRecord);
+                connection.Execute(storedProc,
+                    discountRecord,
+                    commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -39,7 +42,26 @@ namespace Infrastructure.Repositories
 
             using ( var connection = new SqlConnection(_connectionString))
             {
-                discountRecord = connection.Query<DiscountRecord>(storedProc, id).FirstOrDefault();
+                discountRecord = connection.Query<DiscountRecord>(storedProc,
+                    new { id },
+                    commandType: CommandType.StoredProcedure)
+                    .FirstOrDefault();
+            }
+
+            return _mapper.Map<Discount?>(discountRecord);
+        }
+
+        public Discount? FindByCode(string code)
+        {
+            var storedProc = "FindDiscountByCode";
+            DiscountRecord? discountRecord;
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                discountRecord = connection.Query<DiscountRecord>(storedProc,
+                    new { code },
+                    commandType: CommandType.StoredProcedure)
+                    .FirstOrDefault();
             }
 
             return _mapper.Map<Discount?>(discountRecord);
@@ -52,7 +74,10 @@ namespace Infrastructure.Repositories
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                discountRecords = connection.Query<DiscountRecord>(storedProc).ToList();
+                discountRecords = connection.Query<DiscountRecord>(
+                    storedProc,
+                    commandType: CommandType.StoredProcedure)
+                    .ToList();
             }
 
             return _mapper.Map<List<Discount>>(discountRecords);

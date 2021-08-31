@@ -11,6 +11,7 @@ namespace Domain.Repositories
     {
         public void Add(Discount discount);
         public Discount? Find(Guid id);
+        public Discount? FindByCode(string code);
         public List<Discount> GetAll();
     }
 }

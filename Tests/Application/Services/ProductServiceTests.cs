@@ -2,6 +2,7 @@
 using Application.DTO.Product;
 using Application.Services;
 using AutoMapper;
+using Domain.Models.Product;
 using Domain.Repositories;
 using KellermanSoftware.CompareNetObjects;
 using Moq;
@@ -23,6 +24,35 @@ namespace Tests.Application.Services
         {
             _productRepositoryMock = new Mock<IProductRepository>();
             _mapperMock = new Mock<IMapper>();
+        }
+
+        [Fact]
+        public void CreateProduct_DuplicateName_Error()
+        {
+            _productRepositoryMock.Setup(productRepository => productRepository.FindByName(It.IsAny<string>()))
+                .Returns(new Product(Guid.NewGuid(), "Test Name", "test description", Guid.NewGuid(), 5));
+
+            var productService = new ProductService(_productRepositoryMock.Object, _mapperMock.Object);
+
+            var createProductDTO = new CreateProductDTO
+            {
+                Name = "Test name",
+                Description = "Test description",
+                CategoryId = Guid.NewGuid(),
+                Price = 3
+            };
+
+            var expected = new ResultDTO
+            {
+                IsSuccess = false,
+                Errors = { "A product with this name already exists" }
+            };
+
+            var actual = productService.CreateProduct(createProductDTO);
+
+            var compareLogic = new CompareLogic();
+            var result = compareLogic.Compare(expected, actual);
+            Assert.True(result.AreEqual);
         }
 
         [Fact]

@@ -100,5 +100,8 @@
     <Build Include="Stored Procedures\GetCategoryByName.sql" />
     <Build Include="Stored Procedures\GetProducts.sql" />
     <Build Include="Stored Procedures\GetProductsByCategory.sql" />
+    <Build Include="Stored Procedures\GetDiscount.sql" />
+    <Build Include="Stored Procedures\FindProductByName.sql" />
+    <Build Include="Stored Procedures\FindDiscountByCode.sql" />
   </ItemGroup>
 </Project>

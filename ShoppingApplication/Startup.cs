@@ -45,10 +45,14 @@ namespace ShoppingApplication
             services.AddSingleton(autoMapperConfig.CreateMapper());
 
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IDiscountService, DiscountService>();
             services.AddScoped<IProductService, ProductService>();
 
             services.AddScoped<ICategoryRepository>(services =>
                 new CategoryRepository(Configuration.GetConnectionString("DefaultConnection"), services.GetService<IMapper>()));
+
+            services.AddScoped<IDiscountRepository>(services =>
+                new DiscountRepository(Configuration.GetConnectionString("DefaultConnection"), services.GetService<IMapper>()));
 
             services.AddScoped<IProductRepository>(services => 
                 new ProductRepository(Configuration.GetConnectionString("DefaultConnection"), services.GetService<IMapper>()));

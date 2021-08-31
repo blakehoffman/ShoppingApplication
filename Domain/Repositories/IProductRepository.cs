@@ -11,6 +11,7 @@ namespace Domain.Repositories
     {
         public void Add(Product product);
         public Product? Find(Guid id);
+        public Product? FindByName(string name);
         public List<Product> GetAll();
         public List<Product> GetByCategory(Guid categoryId);
     }

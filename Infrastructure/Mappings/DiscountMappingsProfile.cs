@@ -11,7 +11,6 @@ namespace Infrastructure.Mappings
         {
             CreateMap<Discount, DiscountRecord>();
             CreateMap<DiscountRecord?, Discount?>();
-            CreateMap<List<DiscountRecord>, List<Discount>>();
         }
     }
 }
