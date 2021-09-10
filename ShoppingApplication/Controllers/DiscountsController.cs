@@ -1,6 +1,7 @@
 ﻿using Application.DTO;
 using Application.DTO.Discount;
 using Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,7 @@ namespace Application.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize(Policy = "Admin")]
         public ActionResult<ResultDTO> CreateDiscount([FromBody] CreateDiscountDTO createDiscountDTO)
         {
             var result = _discountService.CreateDiscount(createDiscountDTO);

@@ -44,7 +44,7 @@ namespace Application.Services
 
             if (resultDTO.Errors.Count > 0)
             {
-                resultDTO.IsSuccess = false;
+                resultDTO.Succeeded = false;
                 return resultDTO;
             }
 
@@ -56,7 +56,7 @@ namespace Application.Services
             }
 
             _discountRepository.Add(discount);
-            resultDTO.IsSuccess = true;
+            resultDTO.Succeeded = true;
 
             return resultDTO;
         }

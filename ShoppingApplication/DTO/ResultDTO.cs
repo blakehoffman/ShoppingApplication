@@ -7,7 +7,7 @@ namespace Application.DTO
 {
     public class ResultDTO
     {
-        public bool IsSuccess { get; set; }
+        public bool Succeeded { get; set; }
         public List<string> Errors { get; set; } = new List<string>();
     }
 }

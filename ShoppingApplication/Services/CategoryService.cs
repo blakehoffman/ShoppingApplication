@@ -46,13 +46,13 @@ namespace Application.Services
 
             if (resultDTO.Errors.Count > 0)
             {
-                resultDTO.IsSuccess = false;
+                resultDTO.Succeeded = false;
                 return resultDTO;
             }
 
             var category = new Category(Guid.NewGuid(), categoryDTO.Name, categoryDTO.ParentId);
             _categoryRepository.Add(category);
-            resultDTO.IsSuccess = true;
+            resultDTO.Succeeded = true;
 
             return resultDTO;
         }

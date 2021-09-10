@@ -44,7 +44,7 @@ namespace Tests.Application.Services
 
             var expected = new ResultDTO
             {
-                IsSuccess = false,
+                Succeeded = false,
                 Errors = { "A product with this name already exists" }
             };
 
@@ -70,7 +70,7 @@ namespace Tests.Application.Services
 
             var expected = new ResultDTO
             {
-                IsSuccess = false,
+                Succeeded = false,
                 Errors = { "Product name cannot be empty and must be between 4 and 50 characters" }
             };
 
@@ -96,7 +96,7 @@ namespace Tests.Application.Services
 
             var expected = new ResultDTO
             {
-                IsSuccess = false,
+                Succeeded = false,
                 Errors = { "Product name cannot be empty and must be between 4 and 50 characters" }
             };
 
@@ -122,7 +122,7 @@ namespace Tests.Application.Services
 
             var expected = new ResultDTO
             {
-                IsSuccess = false,
+                Succeeded = false,
                 Errors = { "Product name cannot be empty and must be between 4 and 50 characters" }
             };
 
@@ -148,7 +148,7 @@ namespace Tests.Application.Services
 
             var expected = new ResultDTO
             {
-                IsSuccess = false,
+                Succeeded = false,
                 Errors = { "Product description cannot be empty and must be between 8 and 100 characters" }
             };
 
@@ -174,7 +174,7 @@ namespace Tests.Application.Services
 
             var expected = new ResultDTO
             {
-                IsSuccess = false,
+                Succeeded = false,
                 Errors = { "Product description cannot be empty and must be between 8 and 100 characters" }
             };
 
@@ -200,7 +200,7 @@ namespace Tests.Application.Services
 
             var expected = new ResultDTO
             {
-                IsSuccess = false,
+                Succeeded = false,
                 Errors = { "Product description cannot be empty and must be between 8 and 100 characters" }
             };
 
@@ -226,7 +226,7 @@ namespace Tests.Application.Services
 
             var expected = new ResultDTO
             {
-                IsSuccess = false,
+                Succeeded = false,
                 Errors = { "Product category id cannot be empty" }
             };
 
@@ -252,7 +252,7 @@ namespace Tests.Application.Services
 
             var expected = new ResultDTO
             {
-                IsSuccess = false,
+                Succeeded = false,
                 Errors = { "Product price must be above 0" }
             };
 

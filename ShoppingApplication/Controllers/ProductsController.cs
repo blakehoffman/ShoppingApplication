@@ -1,6 +1,7 @@
 ﻿using Application.DTO;
 using Application.DTO.Product;
 using Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -47,11 +48,11 @@ namespace Application.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize(Policy = "Admin")]
         public ActionResult<ResultDTO> CreateProduct(CreateProductDTO createProductDTO)
         {
             var result = _productService.CreateProduct(createProductDTO);
             return result;
         }
-
     }
 }

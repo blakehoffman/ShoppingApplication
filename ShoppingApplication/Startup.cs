@@ -1,24 +1,31 @@
+using Application.Configuration;
 using Application.Mapping;
 using Application.Services;
 using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.Repositories;
+using Infrastructure.Contexts;
+using Infrastructure.Records;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ShoppingApplication
@@ -44,9 +51,17 @@ namespace ShoppingApplication
             });
             services.AddSingleton(autoMapperConfig.CreateMapper());
 
+            var appSettingsSection = Configuration.GetSection("AppSettings").Get<AppSettings>();
+            services.AddSingleton(appSettingsSection);
+
+            services.AddScoped<IAdminService, AdminService>();
+            services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IDiscountService, DiscountService>();
             services.AddScoped<IProductService, ProductService>();
+
+            services.AddScoped<IAdministratorRepository>(services =>
+                new AdministratorRepository(Configuration.GetConnectionString("DefaultConnection"), services.GetService<IMapper>()));
 
             services.AddScoped<ICategoryRepository>(services =>
                 new CategoryRepository(Configuration.GetConnectionString("DefaultConnection"), services.GetService<IMapper>()));
@@ -57,13 +72,83 @@ namespace ShoppingApplication
             services.AddScoped<IProductRepository>(services => 
                 new ProductRepository(Configuration.GetConnectionString("DefaultConnection"), services.GetService<IMapper>()));
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
+            //For identity
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(1);
+                options.User.RequireUniqueEmail = true;
+            })
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+            //Adding authentication
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options =>
+                {
+                    options.SaveToken = true;
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(appSettingsSection.JwtSecret)),
+                        ClockSkew = TimeSpan.Zero,
+                        ValidateAudience = false,
+                        ValidateIssuer = false,
+                        ValidateLifetime = true
+                    };
+                });
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
+
+            services.AddDbContext<ApplicationDbContext>(options =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ShoppingApplication", Version = "v1" });
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            services.AddSwaggerGen(swagger =>
+            {
+                swagger.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "ShoppingApplication",
+                    Version = "v1" 
+                });
+
+                swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Enter 'Bearer' [space] and then your valid token in the text input below.\r\n\r\nExample: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
+                });
+                swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                          new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                }
+                            },
+                            new string[] {}
+
+                    }
+                });
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Admin", policy =>
+                {
+                    policy.RequireRole("Admin");
+                });
             });
         }
 

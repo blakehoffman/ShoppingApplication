@@ -1,6 +1,8 @@
 ﻿using Application.DTO;
 using Application.DTO.Category;
 using Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -42,6 +44,7 @@ namespace Application.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize(Policy = "Admin")]
         public ActionResult<ResultDTO> CreateCategory([FromBody] CreateCategoryDTO createCategoryDTO)
         {
             var result = _categoryService.CreateCategory(createCategoryDTO);

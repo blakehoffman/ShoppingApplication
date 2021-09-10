@@ -65,6 +65,7 @@
     <Folder Include="Tables\Carts" />
     <Folder Include="Tables\CartProducts" />
     <Folder Include="Stored Procedures" />
+    <Folder Include="Tables\Administrators" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Discounts\Discounts.sql" />
@@ -103,5 +104,10 @@
     <Build Include="Stored Procedures\GetDiscount.sql" />
     <Build Include="Stored Procedures\FindProductByName.sql" />
     <Build Include="Stored Procedures\FindDiscountByCode.sql" />
+    <Build Include="Tables\Administrators\Administrators.sql" />
+    <Build Include="Tables\Administrators\AdministratorsHistory.sql" />
+    <Build Include="Stored Procedures\InsertAdministrator.sql" />
+    <Build Include="Stored Procedures\FindAdministrator.sql" />
+    <Build Include="Stored Procedures\GetAdministrators.sql" />
   </ItemGroup>
 </Project>

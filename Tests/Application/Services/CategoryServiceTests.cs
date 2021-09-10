@@ -44,7 +44,7 @@ namespace Tests.Application.Services
             var expected = new ResultDTO
             {
                 Errors = { "A category with this name already exists" },
-                IsSuccess = false
+                Succeeded = false
             };
 
             var actual = categoryService.CreateCategory(createCategoryDTO);
@@ -68,7 +68,7 @@ namespace Tests.Application.Services
             var expected = new ResultDTO
             {
                 Errors = { "Category name cannot be empty and between 3 and 100 characters" },
-                IsSuccess = false
+                Succeeded = false
             };
 
             var actual = categoryService.CreateCategory(createCategoryDTO);
@@ -95,7 +95,7 @@ namespace Tests.Application.Services
             var expected = new ResultDTO
             {
                 Errors = { "Parent category doesn't exist" },
-                IsSuccess = false
+                Succeeded = false
             };
 
             var actual = categoryService.CreateCategory(createCategoryDTO);
@@ -118,7 +118,7 @@ namespace Tests.Application.Services
             var expected = new ResultDTO
             {
                 Errors = { "Category name cannot be empty and between 3 and 100 characters" },
-                IsSuccess = false
+                Succeeded = false
             };
 
             var actual = categoryService.CreateCategory(createCategoryDTO);
@@ -142,7 +142,7 @@ namespace Tests.Application.Services
             var expected = new ResultDTO
             {
                 Errors = { "Category name cannot be empty and between 3 and 100 characters" },
-                IsSuccess = false
+                Succeeded = false
             };
 
             var actual = categoryService.CreateCategory(createCategoryDTO);

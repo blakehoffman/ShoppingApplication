@@ -40,7 +40,7 @@ namespace Tests.Application.Services
             var expected = new ResultDTO
             {
                 Errors = { },
-                IsSuccess = true
+                Succeeded = true
             };
 
             var actual = discountService.CreateDiscount(createDiscountDTO);
@@ -64,7 +64,7 @@ namespace Tests.Application.Services
             var expected = new ResultDTO
             {
                 Errors = { "Discount amount cannot be less than or equal to 0" },
-                IsSuccess = false
+                Succeeded = false
             };
 
             var actual = discountService.CreateDiscount(createDiscountDTO);
@@ -88,7 +88,7 @@ namespace Tests.Application.Services
             var expected = new ResultDTO
             {
                 Errors = { "Discount amount cannot be less than or equal to 0" },
-                IsSuccess = false
+                Succeeded = false
             };
 
             var actual = discountService.CreateDiscount(createDiscountDTO);
@@ -112,7 +112,7 @@ namespace Tests.Application.Services
             var expected = new ResultDTO
             {
                 Errors = { "Discount code cannot be empty and must be between 4 and 50 characters" },
-                IsSuccess = false
+                Succeeded = false
             };
 
             var actual = discountService.CreateDiscount(createDiscountDTO);
@@ -136,7 +136,7 @@ namespace Tests.Application.Services
             var expected = new ResultDTO
             {
                 Errors = { "Discount code cannot be empty and must be between 4 and 50 characters" },
-                IsSuccess = false
+                Succeeded = false
             };
 
             var actual = discountService.CreateDiscount(createDiscountDTO);
@@ -165,7 +165,7 @@ namespace Tests.Application.Services
             var expected = new ResultDTO
             {
                 Errors = { "A discount with this code already exists" },
-                IsSuccess = false
+                Succeeded = false
             };
 
             var actual = discountService.CreateDiscount(createDiscountDTO);
@@ -189,7 +189,7 @@ namespace Tests.Application.Services
             var expected = new ResultDTO
             {
                 Errors = { "Discount code cannot be empty and must be between 4 and 50 characters" },
-                IsSuccess = false
+                Succeeded = false
             };
 
             var actual = discountService.CreateDiscount(createDiscountDTO);
