@@ -14,7 +14,7 @@ namespace Tests.Domain.Models.CartTests
         public void AddItem()
         {
             var product = new Product(Guid.NewGuid(), "test name", 5, 1);
-            var cart = new Cart(Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now);
+            var cart = new Cart(Guid.NewGuid(), "user", DateTimeOffset.Now);
 
             var expected = 1;
 
@@ -28,7 +28,7 @@ namespace Tests.Domain.Models.CartTests
         {
             var product = new Product(Guid.NewGuid(), "test name", 5, 1);
             var productTwo = new Product(Guid.NewGuid(), "test name", 3, 1);
-            var cart = new Cart(Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now);
+            var cart = new Cart(Guid.NewGuid(), "user", DateTimeOffset.Now);
             cart.AddItem(product);
             cart.AddItem(productTwo);
 
@@ -45,7 +45,7 @@ namespace Tests.Domain.Models.CartTests
         public void AddItem_NullProduct_NotAdded()
         {
             Product product = null;
-            var cart = new Cart(Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now);
+            var cart = new Cart(Guid.NewGuid(), "user", DateTimeOffset.Now);
 
             var expected = 0;
 
@@ -58,30 +58,42 @@ namespace Tests.Domain.Models.CartTests
         public void RemoveItem()
         {
             Product product = new Product(Guid.NewGuid(), "test name", 5, 1);
-            var cart = new Cart(Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now);
+            var cart = new Cart(Guid.NewGuid(), "user", DateTimeOffset.Now);
             cart.AddItem(product);
 
             var expected = 0;
 
-            cart.RemoveItem(product);
+            cart.RemoveItem(product.Id);
 
             Assert.True(cart.Products.Count == expected);
         }
 
         [Fact]
-        public void RemoveItem_NullProduct_NoChange()
+        public void UpdateProductQuantity()
         {
-            Product nullProduct = null;
             Product product = new Product(Guid.NewGuid(), "test name", 5, 1);
-            var cart = new Cart(Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now);
+            var cart = new Cart(Guid.NewGuid(), "user", DateTimeOffset.Now);
+            cart.AddItem(product);
+
+            var expected = 5;
+
+            cart.UpdateProductQuantity(product.Id, 5);
+
+            Assert.True(cart.Products.ElementAt(0).Quantity == expected);
+        }
+
+        [Fact]
+        public void UpdateProductQuantity_ProductIsNotInCart()
+        {
+            Product product = new Product(Guid.NewGuid(), "test name", 5, 1);
+            var cart = new Cart(Guid.NewGuid(), "user", DateTimeOffset.Now);
             cart.AddItem(product);
 
             var expected = 1;
 
-            cart.RemoveItem(nullProduct);
+            cart.UpdateProductQuantity(Guid.NewGuid(), 5);
 
-            Assert.True(cart.Products.Count == expected);
+            Assert.True(cart.Products.ElementAt(0).Quantity == expected);
         }
-
     }
 }

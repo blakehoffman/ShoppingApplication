@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
@@ -9,16 +10,16 @@ namespace Domain.Models.Cart
 {
     public class Cart
     {
-        private List<Product> _products = new List<Product>();
+        private IList<Product> _products;
 
-        public Cart(Guid id, Guid userId, DateTimeOffset dateCreated)
+        public Cart(Guid id, string userId, DateTimeOffset dateCreated)
         {
             if (id == Guid.Empty)
             {
                 throw new ArgumentNullException("id cannot empty");
             }
 
-            if (userId == Guid.Empty)
+            if (string.IsNullOrEmpty(userId))
             {
                 throw new ArgumentNullException("userId cannot be empty");
             }
@@ -26,13 +27,37 @@ namespace Domain.Models.Cart
             Id = id;
             UserId = userId;
             DateCreated = dateCreated;
+            _products = new List<Product>();
+        }
+
+        public Cart(Guid id, string userId, DateTimeOffset dateCreated, List<Product> products)
+        {
+            if (id == Guid.Empty)
+            {
+                throw new ArgumentNullException("id cannot empty");
+            }
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentNullException("userId cannot be empty");
+            }
+
+            Id = id;
+            UserId = userId;
+            DateCreated = dateCreated;
+            _products = products;
         }
 
         public Guid Id { get; }
-        public Guid UserId { get; }
+
+        public string UserId { get; }
+
         public DateTimeOffset DateCreated { get; }
+
         public bool Purchased { get; private set; }
-        public IReadOnlyCollection<Product> Products => _products.AsReadOnly();
+
+        public ImmutableList<Product> Products => _products.ToImmutableList();
+
         public int GetTotal => _products.Sum(p => p.Price * p.Quantity);
 
         public void AddItem(Product product)
@@ -50,23 +75,50 @@ namespace Domain.Models.Cart
             }
             else
             {
-                productInProducts.Quantity++;
+                productInProducts.UpdateQuantity(productInProducts.Quantity + 1);
             }
         }
 
-        public void RemoveItem(Product product)
+        public void AddProducts(IEnumerable<Product> products)
         {
-            if (product == null)
+            if (products == null)
             {
                 return;
             }
 
-            var productToRemove = _products.Where(p => p.Id == product.Id).First();
+            _products.Clear();
+            
+            foreach (var product in products)
+            {
+                AddItem(product);
+            }
+        }
+
+        public void RemoveItem(Guid productId)
+        {
+            if (productId == Guid.Empty)
+            {
+                return;
+            }
+
+            var productToRemove = _products.Where(p => p.Id == productId).FirstOrDefault();
 
             if (productToRemove != null)
             {
                 _products.Remove(productToRemove);
             }
+        }
+
+        public void UpdateProductQuantity(Guid productId, int quantity)
+        {
+            var product = Products.Where(product => product.Id == productId).FirstOrDefault();
+
+            if (product == null)
+            {
+                return;
+            }
+
+            product.UpdateQuantity(quantity);
         }
     }
 }

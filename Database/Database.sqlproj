@@ -109,5 +109,7 @@
     <Build Include="Stored Procedures\InsertAdministrator.sql" />
     <Build Include="Stored Procedures\FindAdministrator.sql" />
     <Build Include="Stored Procedures\GetAdministrators.sql" />
+    <Build Include="Stored Procedures\GetCartByUserID.sql" />
+    <Build Include="Stored Procedures\DeleteCartProducts.sql" />
   </ItemGroup>
 </Project>

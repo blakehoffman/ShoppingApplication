@@ -29,6 +29,14 @@ namespace Domain.Models.Cart
         public Guid Id { get; }
         public string Name { get; }
         public int Price { get; }
-        public int Quantity { get; set; }
+        public int Quantity { get; private set; }
+
+        public void UpdateQuantity(int quantity)
+        {
+            if (quantity > 0)
+            {
+                Quantity = quantity;
+            }
+        }
     }
 }

@@ -56,12 +56,16 @@ namespace ShoppingApplication
 
             services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ICartService, CartService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IDiscountService, DiscountService>();
             services.AddScoped<IProductService, ProductService>();
 
             services.AddScoped<IAdministratorRepository>(services =>
                 new AdministratorRepository(Configuration.GetConnectionString("DefaultConnection"), services.GetService<IMapper>()));
+
+            services.AddScoped<ICartRepository>(services =>
+                new CartRepository(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<ICategoryRepository>(services =>
                 new CategoryRepository(Configuration.GetConnectionString("DefaultConnection"), services.GetService<IMapper>()));
