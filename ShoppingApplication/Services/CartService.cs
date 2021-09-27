@@ -105,7 +105,7 @@ namespace Application.Services
                 };
             }
 
-            var cart = new Cart(cartGuid, userId, DateTimeOffset.Now);
+            var cart = new Cart(cartGuid, userId, DateTimeOffset.UtcNow);
             _cartRepository.Add(cart);
 
             return new ResultDTO { Succeeded = true };

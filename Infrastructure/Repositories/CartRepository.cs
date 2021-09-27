@@ -73,7 +73,8 @@ namespace Infrastructure.Repositories
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                cartProductRecords = connection.Query<CartProductRecord>(storedProc,
+                cartProductRecords = connection.Query<CartProductRecord>(
+                    storedProc,
                     new { id },
                     commandType: CommandType.StoredProcedure)
                     .ToList();
@@ -88,7 +89,8 @@ namespace Infrastructure.Repositories
 
                 using (var connection = new SqlConnection(_connectionString))
                 {
-                    productRecord = connection.Query<ProductRecord?>(storedProc,
+                    productRecord = connection.Query<ProductRecord?>(
+                        storedProc,
                         new { cartProductRecord.ProductId },
                         commandType: CommandType.StoredProcedure)
                         .FirstOrDefault();
@@ -112,7 +114,8 @@ namespace Infrastructure.Repositories
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                cartRecord = connection.Query<CartRecord>(storedProc,
+                cartRecord = connection.Query<CartRecord>(
+                    storedProc,
                     new { userId },
                     commandType: CommandType.StoredProcedure)
                     .FirstOrDefault();
@@ -128,7 +131,8 @@ namespace Infrastructure.Repositories
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                cartProductRecords = connection.Query<CartProductRecord>(storedProc,
+                cartProductRecords = connection.Query<CartProductRecord>(
+                    storedProc,
                     new { cartRecord.Id },
                     commandType: CommandType.StoredProcedure)
                     .ToList();
@@ -143,7 +147,8 @@ namespace Infrastructure.Repositories
 
                 using (var connection = new SqlConnection(_connectionString))
                 {
-                    productRecord = connection.Query<ProductRecord?>(storedProc,
+                    productRecord = connection.Query<ProductRecord?>(
+                        storedProc,
                         new { Id = cartProductRecord.ProductId },
                         commandType: CommandType.StoredProcedure)
                         .FirstOrDefault();
@@ -162,7 +167,16 @@ namespace Infrastructure.Repositories
 
         public void Update(Cart cart)
         {
-            var storedProc = "DeleteCartProducts";
+            var storedProc = "UpdateCart";
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Execute(storedProc,
+                    new { CartId = cart.Id, Purchased = cart.Purchased },
+                    commandType: CommandType.StoredProcedure);
+            }
+
+            storedProc = "DeleteCartProducts";
 
             using (var connection = new SqlConnection(_connectionString))
             {

@@ -36,7 +36,7 @@ namespace Tests.Application.Services
             var productID = Guid.NewGuid();
 
             _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
-                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.Now));
+                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .Returns(new ProductModel(productID, "test product", "description", Guid.NewGuid(), 3));
@@ -82,7 +82,7 @@ namespace Tests.Application.Services
         public void AddProductToCart_NoneExistentProduct_Error()
         {
             _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
-                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.Now));
+                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .Returns((ProductModel)null);
@@ -114,7 +114,7 @@ namespace Tests.Application.Services
             var productID = Guid.NewGuid();
 
             _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
-                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.Now));
+                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .Returns(new ProductModel(productID, "test product", "description", Guid.NewGuid(), 3));
@@ -167,7 +167,7 @@ namespace Tests.Application.Services
                 .Returns((Cart)null);
 
             _cartRepositoryMock.Setup(cartRepository => cartRepository.Find(It.IsAny<Guid>()))
-                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.Now));
+                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
 
             var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object);
 
@@ -206,7 +206,7 @@ namespace Tests.Application.Services
         public void CreateCart_UserAlreadyHasCart_Error()
         {
             _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
-                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.Now));
+                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
 
             var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object);
 
@@ -227,7 +227,7 @@ namespace Tests.Application.Services
         public void DeleteProductFromCart()
         {
             var productID = Guid.NewGuid();
-            var userCart = new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.Now);
+            var userCart = new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow);
             userCart.AddItem(new Product(productID, "test product", 25, 1));
 
             _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
@@ -251,7 +251,7 @@ namespace Tests.Application.Services
         public void DeleteProductFromCart_NonExistentProduct_Error()
         {
             _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
-                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.Now));
+                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .Returns((ProductModel)null);
@@ -295,7 +295,7 @@ namespace Tests.Application.Services
             var productID = Guid.NewGuid();
 
             _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
-                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.Now));
+                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .Returns(new ProductModel(Guid.NewGuid(), "test product", "description", Guid.NewGuid(), 25));
@@ -341,7 +341,7 @@ namespace Tests.Application.Services
             var productID = Guid.NewGuid();
 
             _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
-                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.Now));
+                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .Returns((ProductModel)null);

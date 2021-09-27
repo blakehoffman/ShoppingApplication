@@ -54,7 +54,7 @@ namespace Domain.Models.Cart
 
         public DateTimeOffset DateCreated { get; }
 
-        public bool Purchased { get; private set; }
+        public bool Purchased { get; set; }
 
         public ImmutableList<Product> Products => _products.ToImmutableList();
 

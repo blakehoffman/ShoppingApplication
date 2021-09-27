@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
@@ -9,17 +10,17 @@ namespace Domain.Models.Order
 {
     public class Order
     {
-        private readonly double? _discount;
-        private List<Product> _products = new List<Product>();
+        private readonly Discount? _discount;
+        private IList<Product> _products;
 
-        public Order(Guid id, Guid userId, DateTimeOffset dateTime, double? discount)
+        public Order(Guid id, string userId, DateTimeOffset dateTime, Discount? discount)
         {
             if (id == Guid.Empty)
             {
                 throw new ArgumentException("Id cannot be empty");
             }
 
-            if (userId == Guid.Empty)
+            if (string.IsNullOrWhiteSpace(userId))
             {
                 throw new ArgumentException("UserId cannot be empty");
             }
@@ -28,12 +29,33 @@ namespace Domain.Models.Order
             UserId = userId;
             DateTime = dateTime;
             _discount = discount;
+            _products = new List<Product>();
+        }
+
+        public Order(Guid id, string userId, DateTimeOffset dateTime, Discount? discount, List<Product> products)
+        {
+            if (id == Guid.Empty)
+            {
+                throw new ArgumentException("Id cannot be empty");
+            }
+
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                throw new ArgumentException("UserId cannot be empty");
+            }
+
+            Id = id;
+            UserId = userId;
+            DateTime = dateTime;
+            _discount = discount;
+            _products = products;
         }
 
         public Guid Id { get; }
-        public Guid UserId { get; }
+        public string UserId { get; }
         public DateTimeOffset DateTime { get; }
-        public IReadOnlyCollection<Product> Products => _products.AsReadOnly();
+        public Guid? Discount => _discount?.Id;
+        public ImmutableList<Product> Products => _products.ToImmutableList();
 
         public void AddItem(Product product)
         {
@@ -60,7 +82,7 @@ namespace Domain.Models.Order
 
             if (_discount != null)
             {
-                return productTotal * (double)_discount;
+                return (double)productTotal * _discount.Amount;
             }
 
             return productTotal;

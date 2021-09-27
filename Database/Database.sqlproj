@@ -111,5 +111,8 @@
     <Build Include="Stored Procedures\GetAdministrators.sql" />
     <Build Include="Stored Procedures\GetCartByUserID.sql" />
     <Build Include="Stored Procedures\DeleteCartProducts.sql" />
+    <Build Include="Stored Procedures\GetOrders.sql" />
+    <Build Include="Stored Procedures\GetOrdersByUserID.sql" />
+    <Build Include="Stored Procedures\UpdateCart.sql" />
   </ItemGroup>
 </Project>

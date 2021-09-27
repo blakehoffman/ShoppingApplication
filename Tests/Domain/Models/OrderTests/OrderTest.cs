@@ -12,7 +12,7 @@ namespace Tests.Domain.Models.OrderTests
         public void AddItem()
         {
             var product = new Product(Guid.NewGuid(), "test name", 5, 1);
-            var order = new Order(Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now, null);
+            var order = new Order(Guid.NewGuid(), "user", DateTimeOffset.UtcNow, null);
 
             var expected = 1;
 
@@ -26,7 +26,7 @@ namespace Tests.Domain.Models.OrderTests
         {
             var product = new Product(Guid.NewGuid(), "test name", 5, 1);
             var productTwo = new Product(Guid.NewGuid(), "test name", 3, 1);
-            var order = new Order(Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now, null);
+            var order = new Order(Guid.NewGuid(), "user", DateTimeOffset.UtcNow, null);
             order.AddItem(product);
             order.AddItem(productTwo);
             
@@ -43,7 +43,7 @@ namespace Tests.Domain.Models.OrderTests
         public void AddItem_NullProduct_NotAdded()
         {
             Product product = null;
-            var order = new Order(Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now, null);
+            var order = new Order(Guid.NewGuid(), "user", DateTimeOffset.UtcNow, null);
 
             var expected = 0;
 
@@ -57,7 +57,7 @@ namespace Tests.Domain.Models.OrderTests
         {
             var product = new Product(Guid.NewGuid(), "test name", 5, 1);
             var productTwo = new Product(Guid.NewGuid(), "test name", 3, 1);
-            var order = new Order(Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now, null);
+            var order = new Order(Guid.NewGuid(), "user", DateTimeOffset.UtcNow, null);
             order.AddItem(product);
             order.AddItem(productTwo);
 
@@ -73,7 +73,7 @@ namespace Tests.Domain.Models.OrderTests
         {
             var product = new Product(Guid.NewGuid(), "test name", 10, 1);
             var productTwo = new Product(Guid.NewGuid(), "test name", 10, 1);
-            var order = new Order(Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now, 0.25);
+            var order = new Order(Guid.NewGuid(), "user", DateTimeOffset.UtcNow, new Discount(Guid.NewGuid(), 0.25));
             order.AddItem(product);
             order.AddItem(productTwo);
 
@@ -89,7 +89,7 @@ namespace Tests.Domain.Models.OrderTests
         {
             var product = new Product(Guid.NewGuid(), "test name", 5, 1);
             var productTwo = new Product(Guid.NewGuid(), "test name", 3, 2);
-            var order = new Order(Guid.NewGuid(), Guid.NewGuid(), DateTimeOffset.Now, null);
+            var order = new Order(Guid.NewGuid(), "user", DateTimeOffset.UtcNow, null);
             order.AddItem(product);
             order.AddItem(productTwo);
 

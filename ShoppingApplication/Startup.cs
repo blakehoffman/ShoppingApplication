@@ -59,6 +59,7 @@ namespace ShoppingApplication
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IDiscountService, DiscountService>();
+            services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IProductService, ProductService>();
 
             services.AddScoped<IAdministratorRepository>(services =>
@@ -72,6 +73,9 @@ namespace ShoppingApplication
 
             services.AddScoped<IDiscountRepository>(services =>
                 new DiscountRepository(Configuration.GetConnectionString("DefaultConnection"), services.GetService<IMapper>()));
+
+            services.AddScoped<IOrderRepository>(services => 
+                new OrderRepository(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IProductRepository>(services => 
                 new ProductRepository(Configuration.GetConnectionString("DefaultConnection"), services.GetService<IMapper>()));
