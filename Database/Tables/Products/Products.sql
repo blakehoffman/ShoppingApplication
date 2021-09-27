@@ -5,6 +5,7 @@
 	[Name]			VARCHAR(100)		NOT NULL,
 	[Description]	VARCHAR(300)		NOT NULL,
 	CategoryId		uniqueidentifier	NOT NULL,
+	Price			int					NOT NULL,
 	SysStartTime	datetime2			GENERATED ALWAYS AS ROW START NOT NULL,
 	SysEndTime		datetime2			GENERATED ALWAYS AS ROW END   NOT NULL,
 	PERIOD FOR SYSTEM_TIME (SysStartTime, SysEndTime),

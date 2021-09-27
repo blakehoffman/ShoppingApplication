@@ -1,9 +1,4 @@
-﻿using Microsoft.SqlServer.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Infrastructure.Records
 {
@@ -11,6 +6,6 @@ namespace Infrastructure.Records
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public Guid ParentId { get; set; }
+        public Guid? ParentId { get; set; }
     }
 }

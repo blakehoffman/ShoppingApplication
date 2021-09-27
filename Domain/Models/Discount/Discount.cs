@@ -25,7 +25,7 @@ namespace Domain.Models.Discount
                 throw new ArgumentException("amount cannot be less than or equal to zero");
             }
 
-            if (code.Length <= 4 || code.Length > 50)
+            if (code.Length < 4 || code.Length > 50)
             {
                 throw new ArgumentException("code must be greater than or equal to 4 characters and less than 50");
             }

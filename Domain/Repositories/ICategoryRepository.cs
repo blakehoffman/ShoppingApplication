@@ -10,6 +10,8 @@ namespace Domain.Repositories
     public interface ICategoryRepository
     {
         public void Add(Category category);
-        public List<Category> GetAll(Guid parentId);
+        public Category? Find(Guid id);
+        public Category? FindByName(string name);
+        public List<Category> GetAll(Guid? parentId);
     }
 }

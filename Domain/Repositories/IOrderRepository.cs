@@ -12,5 +12,6 @@ namespace Domain.Repositories
         public void Add(Order order);
         public Order? Find(Guid id);
         public List<Order> GetAll();
+        public List<Order> GetUsersOrders(string userID);
     }
 }

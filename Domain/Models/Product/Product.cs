@@ -30,9 +30,9 @@ namespace Domain.Models.Product
                 throw new ArgumentNullException("Category ID cannot be empty");
             }
 
-            if (name.Length < 8 || name.Length > 50)
+            if (name.Length < 4 || name.Length > 50)
             {
-                throw new ArgumentException("Name must be between 8 and 50 characters");
+                throw new ArgumentException("Name must be between 4 and 50 characters");
             }
 
             if (description.Length < 8 || description.Length > 100)
