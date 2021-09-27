@@ -2,6 +2,7 @@
 using Dapper;
 using Domain.Models.Administrator;
 using Domain.Repositories;
+using Infrastructure.Mappings;
 using Infrastructure.Records;
 using System;
 using System.Collections.Generic;
@@ -16,22 +17,21 @@ namespace Infrastructure.Repositories
     public class AdministratorRepository : IAdministratorRepository
     {
         private readonly string _connectionString;
-        private readonly IMapper _mapper;
 
-        public AdministratorRepository(string connectionString, IMapper mapper)
+        public AdministratorRepository(string connectionString)
         {
             _connectionString = connectionString;
-            _mapper = mapper;
         }
 
         public void Add(Administrator administrator)
         {
             var storedProc = "InsertAdministrator";
-            var administratorRecord = _mapper.Map<AdministratorRecord>(administrator);
+            var administratorRecord = AdministratorMapper.MapToAdministratorRecord(administrator);
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                connection.Execute(storedProc,
+                connection.Execute(
+                    storedProc,
                     administratorRecord,
                     commandType: CommandType.StoredProcedure);
             }
@@ -44,13 +44,14 @@ namespace Infrastructure.Repositories
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                adminstratorRecord = connection.Query<AdministratorRecord?>(storedProc,
+                adminstratorRecord = connection.Query<AdministratorRecord?>(
+                    storedProc,
                     new { email },
                     commandType: CommandType.StoredProcedure)
                     .FirstOrDefault();
             }
 
-            return _mapper.Map<Administrator?>(adminstratorRecord);
+            return AdministratorMapper.MapToAdministrator(adminstratorRecord);
         }
 
         public List<Administrator> GetAll()
@@ -60,12 +61,20 @@ namespace Infrastructure.Repositories
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                administratorRecords = connection.Query<AdministratorRecord>(storedProc,
+                administratorRecords = connection.Query<AdministratorRecord>(
+                    storedProc,
                     commandType: CommandType.StoredProcedure)
                     .ToList();
             }
 
-            return _mapper.Map<List<Administrator>>(administratorRecords);
+            var administrators = new List<Administrator>();
+
+            foreach (var administratorRecord in administratorRecords)
+            {
+                administrators.Add(new Administrator(administratorRecord.Email));
+            }
+
+            return administrators;
         }
     }
 }

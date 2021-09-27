@@ -63,22 +63,22 @@ namespace ShoppingApplication
             services.AddScoped<IProductService, ProductService>();
 
             services.AddScoped<IAdministratorRepository>(services =>
-                new AdministratorRepository(Configuration.GetConnectionString("DefaultConnection"), services.GetService<IMapper>()));
+                new AdministratorRepository(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<ICartRepository>(services =>
                 new CartRepository(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<ICategoryRepository>(services =>
-                new CategoryRepository(Configuration.GetConnectionString("DefaultConnection"), services.GetService<IMapper>()));
+                new CategoryRepository(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IDiscountRepository>(services =>
-                new DiscountRepository(Configuration.GetConnectionString("DefaultConnection"), services.GetService<IMapper>()));
+                new DiscountRepository(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IOrderRepository>(services => 
                 new OrderRepository(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IProductRepository>(services => 
-                new ProductRepository(Configuration.GetConnectionString("DefaultConnection"), services.GetService<IMapper>()));
+                new ProductRepository(Configuration.GetConnectionString("DefaultConnection")));
 
             //For identity
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>

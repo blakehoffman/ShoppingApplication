@@ -2,6 +2,7 @@
 using Dapper;
 using Domain.Models.Categories;
 using Domain.Repositories;
+using Infrastructure.Mappings;
 using Infrastructure.Records;
 using System;
 using System.Collections.Generic;
@@ -14,22 +15,21 @@ namespace Infrastructure.Repositories
     public class CategoryRepository : ICategoryRepository
     {
         private readonly string _connectionString;
-        private readonly IMapper _mapper;
 
-        public CategoryRepository(string connectionString, IMapper mapper)
+        public CategoryRepository(string connectionString)
         {
             _connectionString = connectionString;
-            _mapper = mapper;
         }
 
         public void Add(Category category)
         {
             var storedProc = "InsertCategory";
-            var discountRecord = _mapper.Map<CategoryRecord>(category);
+            var discountRecord = CategoryMapper.MapToCategoryRecord(category);
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                connection.Execute(storedProc,
+                connection.Execute(
+                    storedProc,
                     discountRecord,
                     commandType: CommandType.StoredProcedure);
             }
@@ -42,13 +42,14 @@ namespace Infrastructure.Repositories
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                categoryRecord = connection.Query<CategoryRecord?>(storedProc,
+                categoryRecord = connection.Query<CategoryRecord?>(
+                    storedProc,
                     new { id },
                     commandType: CommandType.StoredProcedure)
                     .FirstOrDefault();
             }
 
-            return _mapper.Map<Category?>(categoryRecord);
+            return CategoryMapper.MapToCategory(categoryRecord);
         }
 
         public Category? FindByName(string name)
@@ -58,13 +59,14 @@ namespace Infrastructure.Repositories
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                categoryRecord = connection.Query<CategoryRecord?>(storedProc,
+                categoryRecord = connection.Query<CategoryRecord?>(
+                    storedProc,
                     new { name },
                     commandType: CommandType.StoredProcedure)
                     .FirstOrDefault();
             }
 
-            return _mapper.Map<Category?>(categoryRecord);
+            return CategoryMapper.MapToCategory(categoryRecord);
         }
 
         public List<Category> GetAll(Guid? parentId)
@@ -74,13 +76,21 @@ namespace Infrastructure.Repositories
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                categoryRecords = connection.Query<CategoryRecord>(storedProc,
+                categoryRecords = connection.Query<CategoryRecord>(
+                    storedProc,
                     new { parentId },
                     commandType: CommandType.StoredProcedure)
                     .ToList();
             }
 
-            return _mapper.Map<List<Category>>(categoryRecords);
+            var categories = new List<Category>();
+
+            foreach (var categoryRecord in categoryRecords)
+            {
+                categories.Add(CategoryMapper.MapToCategory(categoryRecord));
+            }
+
+            return categories;
         }
     }
 }

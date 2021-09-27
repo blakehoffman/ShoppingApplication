@@ -2,6 +2,7 @@
 using Dapper;
 using Domain.Models.Product;
 using Domain.Repositories;
+using Infrastructure.Mappings;
 using Infrastructure.Records;
 using System;
 using System.Collections.Generic;
@@ -14,18 +15,16 @@ namespace Infrastructure.Repositories
     public class ProductRepository : IProductRepository
     {
         private readonly string _connectionString;
-        private readonly IMapper _mapper;
 
-        public ProductRepository(string connectionString, IMapper mapper)
+        public ProductRepository(string connectionString)
         {
             _connectionString = connectionString;
-            _mapper = mapper;
         }
 
         public void Add(Product product)
         {
             var storedProc = "InsertProduct";
-            var productRecord = _mapper.Map<ProductRecord>(product);
+            var productRecord = ProductMapper.MapToProductRecord(product);
 
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -48,7 +47,7 @@ namespace Infrastructure.Repositories
                     .FirstOrDefault();
             }
 
-            return _mapper.Map<Product?>(productRecord);
+            return ProductMapper.MapToProduct(productRecord);
         }
 
         public Product? FindByName(string name)
@@ -64,7 +63,7 @@ namespace Infrastructure.Repositories
                     .FirstOrDefault();
             }
 
-            return _mapper.Map<Product?>(productRecord);
+            return ProductMapper.MapToProduct(productRecord);
         }
 
         public List<Product> GetAll()
@@ -79,7 +78,14 @@ namespace Infrastructure.Repositories
                     .ToList();
             }
 
-            return _mapper.Map<List<Product>>(productRecords);
+            var products = new List<Product>();
+
+            foreach (var productRecord in productRecords)
+            {
+                products.Add(ProductMapper.MapToProduct(productRecord));
+            }
+
+            return products;
         }
 
         public List<Product> GetByCategory(Guid categoryId)
@@ -95,7 +101,14 @@ namespace Infrastructure.Repositories
                     .ToList();
             }
 
-            return _mapper.Map<List<Product>>(productRecords);
+            var products = new List<Product>();
+
+            foreach (var productRecord in productRecords)
+            {
+                products.Add(ProductMapper.MapToProduct(productRecord));
+            }
+
+            return products;
         }
     }
 }

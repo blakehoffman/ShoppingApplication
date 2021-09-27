@@ -59,7 +59,7 @@ namespace Tests.Application.Services
                 {
                     new CreateOrderProductDTO { Id = Guid.NewGuid(), Quantity = 1 }
                 },
-                DiscountID = null
+                Discount = null
             };
 
             var expected = new ResultDTO { Succeeded = true };
@@ -132,7 +132,7 @@ namespace Tests.Application.Services
                 {
                     new CreateOrderProductDTO { Id = Guid.NewGuid(), Quantity = 1 }
                 },
-                DiscountID = "test"
+                Discount = "test"
             };
 
             var expected = new ResultDTO
