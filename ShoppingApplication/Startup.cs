@@ -110,6 +110,17 @@ namespace Application
                     };
                 });
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CORSPolicy", builder =>
+                {
+                    builder
+                        .WithOrigins("http://localhost:4200")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+            });
+
             services.AddControllers();
 
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -176,6 +187,8 @@ namespace Application
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseCors("CORSPolicy");
 
             app.UseEndpoints(endpoints =>
             {
