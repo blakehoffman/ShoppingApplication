@@ -1,24 +1,23 @@
-﻿using AutoMapper;
-using Dapper;
+﻿using Dapper;
 using Domain.Models.Product;
 using Domain.Repositories;
+using Domain.UnitOfWork;
 using Infrastructure.Mappings;
 using Infrastructure.Records;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 
 namespace Infrastructure.Repositories
 {
     public class ProductRepository : IProductRepository
     {
-        private readonly string _connectionString;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ProductRepository(string connectionString)
+        public ProductRepository(IUnitOfWork unitOfWork)
         {
-            _connectionString = connectionString;
+            _unitOfWork = unitOfWork;
         }
 
         public void Add(Product product)
@@ -26,12 +25,11 @@ namespace Infrastructure.Repositories
             var storedProc = "InsertProduct";
             var productRecord = ProductMapper.MapToProductRecord(product);
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Execute(storedProc,
-                    productRecord,
-                    commandType: CommandType.StoredProcedure);
-            }
+            _unitOfWork.Connection.Execute(
+                storedProc,
+                productRecord,
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure);
         }
 
         public Product? Find(Guid id)
@@ -39,13 +37,12 @@ namespace Infrastructure.Repositories
             var storedProc = "GetProduct";
             ProductRecord? productRecord;
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                productRecord = connection.Query<ProductRecord?>(storedProc,
-                    new { id },
-                    commandType: CommandType.StoredProcedure)
-                    .FirstOrDefault();
-            }
+            productRecord = _unitOfWork.Connection.Query<ProductRecord?>(
+                storedProc,
+                new { id },
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure)
+                .FirstOrDefault();
 
             return ProductMapper.MapToProduct(productRecord);
         }
@@ -55,13 +52,12 @@ namespace Infrastructure.Repositories
             var storedProc = "FindProductByName";
             ProductRecord? productRecord;
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                productRecord = connection.Query<ProductRecord?>(storedProc,
-                    new { name },
-                    commandType: CommandType.StoredProcedure)
-                    .FirstOrDefault();
-            }
+            productRecord = _unitOfWork.Connection.Query<ProductRecord?>(
+                storedProc,
+                new { name },
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure)
+                .FirstOrDefault();
 
             return ProductMapper.MapToProduct(productRecord);
         }
@@ -71,12 +67,11 @@ namespace Infrastructure.Repositories
             var storedProc = "GetProducts";
             List<ProductRecord> productRecords;
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                productRecords = connection.Query<ProductRecord>(storedProc,
-                    commandType: CommandType.StoredProcedure)
-                    .ToList();
-            }
+            productRecords = _unitOfWork.Connection.Query<ProductRecord>(
+                storedProc,
+                transaction: _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure)
+                .ToList();
 
             var products = new List<Product>();
 
@@ -93,13 +88,12 @@ namespace Infrastructure.Repositories
             var storedProc = "GetProductsByCategory";
             List<ProductRecord> productRecords;
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                productRecords = connection.Query<ProductRecord>(storedProc,
-                    new { categoryId },
-                    commandType: CommandType.StoredProcedure)
-                    .ToList();
-            }
+            productRecords = _unitOfWork.Connection.Query<ProductRecord>(
+                storedProc,
+                new { categoryId },
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure)
+                .ToList();
 
             var products = new List<Product>();
 

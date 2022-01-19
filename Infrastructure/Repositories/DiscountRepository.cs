@@ -1,24 +1,23 @@
-﻿using AutoMapper;
-using Dapper;
+﻿using Dapper;
 using Domain.Models.Discount;
 using Domain.Repositories;
+using Domain.UnitOfWork;
 using Infrastructure.Mappings;
 using Infrastructure.Records;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 
 namespace Infrastructure.Repositories
 {
     public class DiscountRepository : IDiscountRepository
     {
-        private readonly string _connectionString;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public DiscountRepository(string connectionString)
+        public DiscountRepository(IUnitOfWork unitOfWork)
         {
-            _connectionString = connectionString;
+            _unitOfWork = unitOfWork;
         }
 
         public void Add(Discount discount)
@@ -26,13 +25,11 @@ namespace Infrastructure.Repositories
             var storedProc = "InsertDiscount";
             var discountRecord = DiscountMapper.MapToDiscountRecord(discount);
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Execute(
-                    storedProc,
-                    discountRecord,
-                    commandType: CommandType.StoredProcedure);
-            }
+            _unitOfWork.Connection.Execute(
+                storedProc,
+                discountRecord,
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure);
         }
 
         public Discount? Find(Guid id)
@@ -40,14 +37,12 @@ namespace Infrastructure.Repositories
             var storedProc = "GetDiscount";
             DiscountRecord? discountRecord;
 
-            using ( var connection = new SqlConnection(_connectionString))
-            {
-                discountRecord = connection.Query<DiscountRecord>(
-                    storedProc,
-                    new { id },
-                    commandType: CommandType.StoredProcedure)
-                    .FirstOrDefault();
-            }
+            discountRecord = _unitOfWork.Connection.Query<DiscountRecord>(
+                storedProc,
+                new { id },
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure)
+                .FirstOrDefault();
 
             return DiscountMapper.MapToDiscount(discountRecord);
         }
@@ -57,14 +52,12 @@ namespace Infrastructure.Repositories
             var storedProc = "FindDiscountByCode";
             DiscountRecord? discountRecord;
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                discountRecord = connection.Query<DiscountRecord>(
-                    storedProc,
-                    new { code },
-                    commandType: CommandType.StoredProcedure)
-                    .FirstOrDefault();
-            }
+            discountRecord = _unitOfWork.Connection.Query<DiscountRecord>(
+                storedProc,
+                new { code },
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure)
+                .FirstOrDefault();
 
             return DiscountMapper.MapToDiscount(discountRecord);
         }
@@ -74,13 +67,11 @@ namespace Infrastructure.Repositories
             var storedProc = "GetDiscounts";
             List<DiscountRecord> discountRecords;
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                discountRecords = connection.Query<DiscountRecord>(
-                    storedProc,
-                    commandType: CommandType.StoredProcedure)
-                    .ToList();
-            }
+            discountRecords = _unitOfWork.Connection.Query<DiscountRecord>(
+                storedProc,
+                transaction: _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure)
+                .ToList();
 
             var discounts = new List<Discount>();
 

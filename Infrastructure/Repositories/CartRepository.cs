@@ -1,23 +1,23 @@
 ﻿using Dapper;
 using Domain.Models.Cart;
 using Domain.Repositories;
+using Domain.UnitOfWork;
 using Infrastructure.Mappings;
 using Infrastructure.Records;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 
 namespace Infrastructure.Repositories
 {
     public class CartRepository : ICartRepository
     {
-        private readonly string _connectionString;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CartRepository(string connectionString)
+        public CartRepository(IUnitOfWork unitOfWork)
         {
-            _connectionString = connectionString;
+            _unitOfWork = unitOfWork;
         }
 
         public void Add(Cart cart)
@@ -25,13 +25,11 @@ namespace Infrastructure.Repositories
             var storedProc = "InsertCart";
             var cartRecord = CartMapper.MapToCartRecord(cart);
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Execute(
-                    storedProc,
-                    cartRecord,
-                    commandType: CommandType.StoredProcedure);
-            }
+            _unitOfWork.Connection.Execute(
+                storedProc,
+                cartRecord,
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure);
 
             storedProc = "InsertCartProduct";
 
@@ -39,13 +37,11 @@ namespace Infrastructure.Repositories
             {
                 var cartProductRecord = CartMapper.MapToCartProductRecord(cart.Id, cartProduct);
 
-                using (var connection = new SqlConnection(_connectionString))
-                {
-                    connection.Execute(
-                        storedProc,
-                        cartProductRecord,
-                        commandType: CommandType.StoredProcedure);
-                }
+                _unitOfWork.Connection.Execute(
+                    storedProc,
+                    cartProductRecord,
+                    _unitOfWork.Transaction,
+                    commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -54,14 +50,12 @@ namespace Infrastructure.Repositories
             var storedProc = "GetCart";
             CartRecord? cartRecord;
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                cartRecord = connection.Query<CartRecord>(
-                    storedProc,
-                    new { id },
-                    commandType: CommandType.StoredProcedure)
-                    .FirstOrDefault();
-            }
+            cartRecord = _unitOfWork.Connection.Query<CartRecord>(
+                storedProc,
+                new { id },
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure)
+                .FirstOrDefault();
 
             if (cartRecord == null)
             {
@@ -71,14 +65,12 @@ namespace Infrastructure.Repositories
             List<CartProductRecord> cartProductRecords;
             storedProc = "GetCartProducts";
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                cartProductRecords = connection.Query<CartProductRecord>(
-                    storedProc,
-                    new { id },
-                    commandType: CommandType.StoredProcedure)
-                    .ToList();
-            }
+            cartProductRecords = _unitOfWork.Connection.Query<CartProductRecord>(
+                storedProc,
+                new { id },
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure)
+                .ToList();
 
             List<Product> products = new List<Product>();
             storedProc = "GetProduct";
@@ -87,14 +79,12 @@ namespace Infrastructure.Repositories
             {
                 ProductRecord? productRecord;
 
-                using (var connection = new SqlConnection(_connectionString))
-                {
-                    productRecord = connection.Query<ProductRecord?>(
-                        storedProc,
-                        new { cartProductRecord.ProductId },
-                        commandType: CommandType.StoredProcedure)
-                        .FirstOrDefault();
-                }
+                productRecord = _unitOfWork.Connection.Query<ProductRecord?>(
+                    storedProc,
+                    new { Id = cartProductRecord.ProductId },
+                    _unitOfWork.Transaction,
+                    commandType: CommandType.StoredProcedure)
+                    .FirstOrDefault();
 
                 var product = CartMapper.MapToCartProduct(cartProductRecord, productRecord);
                 
@@ -112,14 +102,12 @@ namespace Infrastructure.Repositories
             var storedProc = "GetCartByUserId";
             CartRecord? cartRecord;
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                cartRecord = connection.Query<CartRecord>(
-                    storedProc,
-                    new { userId },
-                    commandType: CommandType.StoredProcedure)
-                    .FirstOrDefault();
-            }
+            cartRecord = _unitOfWork.Connection.Query<CartRecord>(
+                storedProc,
+                new { userId },
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure)
+                .FirstOrDefault();
 
             if (cartRecord == null)
             {
@@ -129,14 +117,12 @@ namespace Infrastructure.Repositories
             List<CartProductRecord> cartProductRecords;
             storedProc = "GetCartProducts";
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                cartProductRecords = connection.Query<CartProductRecord>(
-                    storedProc,
-                    new { cartRecord.Id },
-                    commandType: CommandType.StoredProcedure)
-                    .ToList();
-            }
+            cartProductRecords = _unitOfWork.Connection.Query<CartProductRecord>(
+                storedProc,
+                new { cartRecord.Id },
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure)
+                .ToList();
 
             List<Product> products = new List<Product>();
             storedProc = "GetProduct";
@@ -145,14 +131,12 @@ namespace Infrastructure.Repositories
             {
                 ProductRecord? productRecord;
 
-                using (var connection = new SqlConnection(_connectionString))
-                {
-                    productRecord = connection.Query<ProductRecord?>(
-                        storedProc,
-                        new { Id = cartProductRecord.ProductId },
-                        commandType: CommandType.StoredProcedure)
-                        .FirstOrDefault();
-                }
+                productRecord = _unitOfWork.Connection.Query<ProductRecord?>(
+                    storedProc,
+                    new { Id = cartProductRecord.ProductId },
+                    _unitOfWork.Transaction,
+                    commandType: CommandType.StoredProcedure)
+                    .FirstOrDefault();
 
                 var product = CartMapper.MapToCartProduct(cartProductRecord, productRecord);
                 
@@ -169,21 +153,17 @@ namespace Infrastructure.Repositories
         {
             var storedProc = "UpdateCart";
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Execute(storedProc,
-                    new { CartId = cart.Id, Purchased = cart.Purchased },
-                    commandType: CommandType.StoredProcedure);
-            }
+            _unitOfWork.Connection.Execute(storedProc,
+                new { CartId = cart.Id, Purchased = cart.Purchased },
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure);
 
             storedProc = "DeleteCartProducts";
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Execute(storedProc,
-                    new { cart.Id },
-                    commandType: CommandType.StoredProcedure);
-            }
+            _unitOfWork.Connection.Execute(storedProc,
+                new { cart.Id },
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure);
 
             storedProc = "InsertCartProduct";
 
@@ -191,12 +171,10 @@ namespace Infrastructure.Repositories
             {
                 var cartProductRecord = CartMapper.MapToCartProductRecord(cart.Id, cartProduct);
 
-                using (var connection = new SqlConnection(_connectionString))
-                {
-                    connection.Execute(storedProc,
-                        cartProductRecord,
-                        commandType: CommandType.StoredProcedure);
-                }
+                _unitOfWork.Connection.Execute(storedProc,
+                    cartProductRecord,
+                    _unitOfWork.Transaction,
+                    commandType: CommandType.StoredProcedure);
             }
         }
     }

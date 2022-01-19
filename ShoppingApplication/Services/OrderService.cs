@@ -4,6 +4,7 @@ using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.Models.Order;
 using Domain.Repositories;
+using Domain.UnitOfWork;
 using System;
 using System.Collections.Generic;
 
@@ -16,19 +17,23 @@ namespace Application.Services
         private readonly IMapper _mapper;
         private readonly IOrderRepository _orderRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public OrderService(
             ICartRepository cartRepository,
             IDiscountRepository discountRepository,
             IMapper mapper,
             IOrderRepository orderRepository,
-            IProductRepository productRepository)
+            IProductRepository productRepository,
+            IUnitOfWork unitOfWork)
         {
             _cartRepository = cartRepository;
             _discountRepository = discountRepository;
             _mapper = mapper;
             _orderRepository = orderRepository;
             _productRepository = productRepository;
+            _unitOfWork = unitOfWork;
+
         }
 
         public ResultDTO CreateOrder(string userID, CreateOrderDTO createOrderDTO)
@@ -88,16 +93,28 @@ namespace Application.Services
                 order.AddItem(orderProduct);
             }
 
-            _orderRepository.Add(order);
-            var cart = _cartRepository.FindByUserId(userID);
-
-            if (cart != null)
+            try
             {
-                cart.Purchased = true;
-                _cartRepository.Update(cart);
+                _unitOfWork.Begin();
+
+                _orderRepository.Add(order);
+                var cart = _cartRepository.FindByUserId(userID);
+
+                if (cart != null)
+                {
+                    cart.Purchased = true;
+                    _cartRepository.Update(cart);
+                }
+
+                _unitOfWork.Commit();
+                resultDTO.Succeeded = true;
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                resultDTO.Succeeded = false;
             }
 
-            resultDTO.Succeeded = true;
             return resultDTO;
         }
 

@@ -1,26 +1,22 @@
-﻿using AutoMapper;
-using Dapper;
+﻿using Dapper;
 using Domain.Models.Administrator;
 using Domain.Repositories;
+using Domain.UnitOfWork;
 using Infrastructure.Mappings;
 using Infrastructure.Records;
-using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
     public class AdministratorRepository : IAdministratorRepository
     {
-        private readonly string _connectionString;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AdministratorRepository(string connectionString)
+        public AdministratorRepository(IUnitOfWork unitOfWork)
         {
-            _connectionString = connectionString;
+            _unitOfWork = unitOfWork;
         }
 
         public void Add(Administrator administrator)
@@ -28,13 +24,11 @@ namespace Infrastructure.Repositories
             var storedProc = "InsertAdministrator";
             var administratorRecord = AdministratorMapper.MapToAdministratorRecord(administrator);
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Execute(
-                    storedProc,
-                    administratorRecord,
-                    commandType: CommandType.StoredProcedure);
-            }
+            _unitOfWork.Connection.Execute(
+                storedProc,
+                administratorRecord,
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure);
         }
 
         public Administrator? Find(string email)
@@ -42,14 +36,12 @@ namespace Infrastructure.Repositories
             var storedProc = "FindAdministrator";
             AdministratorRecord? adminstratorRecord;
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                adminstratorRecord = connection.Query<AdministratorRecord?>(
-                    storedProc,
-                    new { email },
-                    commandType: CommandType.StoredProcedure)
-                    .FirstOrDefault();
-            }
+            adminstratorRecord = _unitOfWork.Connection.Query<AdministratorRecord?>(
+                storedProc,
+                new { email },
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure)
+                .FirstOrDefault();
 
             return AdministratorMapper.MapToAdministrator(adminstratorRecord);
         }
@@ -59,13 +51,11 @@ namespace Infrastructure.Repositories
             var storedProc = "GetAdministrators";
             List<AdministratorRecord> administratorRecords;
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                administratorRecords = connection.Query<AdministratorRecord>(
-                    storedProc,
-                    commandType: CommandType.StoredProcedure)
-                    .ToList();
-            }
+            administratorRecords = _unitOfWork.Connection.Query<AdministratorRecord>(
+                storedProc,
+                _unitOfWork.Transaction,
+                commandType: CommandType.StoredProcedure)
+                .ToList();
 
             var administrators = new List<Administrator>();
 
