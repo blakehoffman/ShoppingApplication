@@ -1,32 +1,27 @@
 using Application.Configuration;
-using Application.Mapping;
 using Application.Services;
 using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.Repositories;
+using Domain.UnitOfWork;
 using Infrastructure.Contexts;
 using Infrastructure.Records;
 using Infrastructure.Repositories;
-using Microsoft.AspNetCore.Authentication;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Application
 {
@@ -62,23 +57,24 @@ namespace Application
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IProductService, ProductService>();
 
-            services.AddScoped<IAdministratorRepository>(services =>
-                new AdministratorRepository(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<DbConnection>(provider =>
+            {
+                return new SqlConnection(Configuration.GetConnectionString("DefaultConnection"));
+            });
 
-            services.AddScoped<ICartRepository>(services =>
-                new CartRepository(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IAdministratorRepository, AdministratorRepository>();
 
-            services.AddScoped<ICategoryRepository>(services =>
-                new CategoryRepository(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<ICartRepository, CartRepository>();
 
-            services.AddScoped<IDiscountRepository>(services =>
-                new DiscountRepository(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
-            services.AddScoped<IOrderRepository>(services => 
-                new OrderRepository(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IDiscountRepository, DiscountRepository>();
 
-            services.AddScoped<IProductRepository>(services => 
-                new ProductRepository(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IOrderRepository, OrderRepository>();
+
+            services.AddScoped<IProductRepository, ProductRepository>();
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             //For identity
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>

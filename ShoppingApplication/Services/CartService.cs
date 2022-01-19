@@ -4,10 +4,8 @@ using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.Models.Cart;
 using Domain.Repositories;
+using Domain.UnitOfWork;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -16,15 +14,18 @@ namespace Application.Services
         private readonly ICartRepository _cartRepository;
         private readonly IMapper _mapper;
         private readonly IProductRepository _productRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public CartService(
             ICartRepository cartRepository,
             IMapper mapper,
-            IProductRepository productRepository)
+            IProductRepository productRepository,
+            IUnitOfWork unitOfWork)
         {
             _cartRepository = cartRepository;
             _mapper = mapper;
             _productRepository = productRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public ResultDTO? AddProductToCart(string userId, CartProductDTO productDTO)
@@ -66,8 +67,20 @@ namespace Application.Services
             }
 
             userCart.AddItem(new Product(product.Id, product.Name, product.Price, productDTO.Quantity));
-            _cartRepository.Update(userCart);
-            resultDTO.Succeeded = true;
+            
+            try
+            {
+                _unitOfWork.Begin();
+                _cartRepository.Update(userCart);
+                _unitOfWork.Commit();
+
+                resultDTO.Succeeded = true;
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                resultDTO.Succeeded = false;
+            }
 
             return resultDTO;
         }
