@@ -1,17 +1,12 @@
 ﻿using Domain.Models.Product;
 using Infrastructure.Records;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Mappings
 {
     public static class ProductMapper
     {
 
-        public static Product? MapToProduct(ProductRecord? productRecord)
+        public static Product MapToProduct(ProductRecord productRecord)
         {
             if (productRecord == null)
             {
@@ -26,7 +21,7 @@ namespace Infrastructure.Mappings
                 productRecord.Price);
         }
 
-        public static ProductRecord? MapToProductRecord(Product? product)
+        public static ProductRecord MapToProductRecord(Product product)
         {
             if (product == null)
             {

@@ -32,12 +32,12 @@ namespace Infrastructure.Repositories
                 commandType: CommandType.StoredProcedure);
         }
 
-        public Product? Find(Guid id)
+        public Product Find(Guid id)
         {
             var storedProc = "GetProduct";
-            ProductRecord? productRecord;
+            ProductRecord productRecord;
 
-            productRecord = _unitOfWork.Connection.Query<ProductRecord?>(
+            productRecord = _unitOfWork.Connection.Query<ProductRecord>(
                 storedProc,
                 new { id },
                 _unitOfWork.Transaction,
@@ -47,12 +47,12 @@ namespace Infrastructure.Repositories
             return ProductMapper.MapToProduct(productRecord);
         }
 
-        public Product? FindByName(string name)
+        public Product FindByName(string name)
         {
             var storedProc = "FindProductByName";
-            ProductRecord? productRecord;
+            ProductRecord productRecord;
 
-            productRecord = _unitOfWork.Connection.Query<ProductRecord?>(
+            productRecord = _unitOfWork.Connection.Query<ProductRecord>(
                 storedProc,
                 new { name },
                 _unitOfWork.Transaction,

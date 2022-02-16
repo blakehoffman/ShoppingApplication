@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Models.Order
 {
     public class Order
     {
-        private readonly Discount? _discount;
+        private readonly Discount _discount;
         private IList<Product> _products;
 
-        public Order(Guid id, string userId, DateTimeOffset dateTime, Discount? discount)
+        public Order(Guid id, string userId, DateTimeOffset dateTime, Discount discount)
         {
             if (id == Guid.Empty)
             {
@@ -32,7 +29,7 @@ namespace Domain.Models.Order
             _products = new List<Product>();
         }
 
-        public Order(Guid id, string userId, DateTimeOffset dateTime, Discount? discount, List<Product> products)
+        public Order(Guid id, string userId, DateTimeOffset dateTime, Discount discount, List<Product> products)
         {
             if (id == Guid.Empty)
             {

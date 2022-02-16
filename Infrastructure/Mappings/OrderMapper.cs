@@ -2,16 +2,13 @@
 using Infrastructure.Records;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Mappings
 {
     public static class OrderMapper
     {
 
-        public static Discount? MapDiscountRecordToDiscount(DiscountRecord? discountRecord)
+        public static Discount MapDiscountRecordToDiscount(DiscountRecord discountRecord)
         {
             if (discountRecord == null)
             {
@@ -21,7 +18,7 @@ namespace Infrastructure.Mappings
             return new Discount(discountRecord.Id, discountRecord.Amount);
         }
 
-        public static Product? MapOrderProductRecordToProduct(OrderProductRecord orderProductRecord, ProductRecord productRecord)
+        public static Product MapOrderProductRecordToProduct(OrderProductRecord orderProductRecord, ProductRecord productRecord)
         {
             if (orderProductRecord == null)
             {
@@ -31,7 +28,7 @@ namespace Infrastructure.Mappings
             return new Product(orderProductRecord.ProductId, productRecord.Name, productRecord.Price, orderProductRecord.Quantity);
         }
 
-        public static Order? MapOrderRecordToOrder(OrderRecord orderRecord, List<Product> orderProducts, Discount? discount)
+        public static Order MapOrderRecordToOrder(OrderRecord orderRecord, List<Product> orderProducts, Discount discount)
         {
             if (orderRecord != null && orderProducts == null)
             {
@@ -47,7 +44,7 @@ namespace Infrastructure.Mappings
             }
         }
 
-        public static OrderProductRecord? MapProductToOrderProductRecord(Product? product, Guid orderId)
+        public static OrderProductRecord MapProductToOrderProductRecord(Product product, Guid orderId)
         {
             if (product == null)
             {
@@ -62,7 +59,7 @@ namespace Infrastructure.Mappings
             };
         }
 
-        public static OrderRecord? MapToOrderRecord(Order? order)
+        public static OrderRecord MapToOrderRecord(Order order)
         {
             if (order == null)
             {

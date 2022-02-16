@@ -39,7 +39,7 @@ namespace Application.Services
             _userManager = userManager;
         }
 
-        public async Task<AuthenticationTokensDTO?> Login(LoginDTO loginDTO)
+        public async Task<AuthenticationTokensDTO> Login(LoginDTO loginDTO)
         {
             var user = _userManager.Users.FirstOrDefault(user => user.UserName == loginDTO.Username);
 
@@ -77,7 +77,7 @@ namespace Application.Services
             };
         }
 
-        public async Task<AuthenticationTokensDTO?> RefreshTokens(string refreshToken)
+        public async Task<AuthenticationTokensDTO> RefreshTokens(string refreshToken)
         {
             var isValidRefreshToken = Tokens.ValidateToken(refreshToken, _appSettings.JwtSecret);
 

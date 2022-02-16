@@ -2,15 +2,12 @@
 using Infrastructure.Records;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Mappings
 {
     public static class CartMapper
     {
-        public static Cart? MapToCart(CartRecord cartRecord, List<Product> cartProducts)
+        public static Cart MapToCart(CartRecord cartRecord, List<Product> cartProducts)
         {
             if (cartRecord != null && cartProducts == null)
             {
@@ -26,7 +23,7 @@ namespace Infrastructure.Mappings
             }
         }
 
-        public static CartRecord? MapToCartRecord(Cart cart)
+        public static CartRecord MapToCartRecord(Cart cart)
         {
             if (cart == null)
             {
@@ -42,7 +39,7 @@ namespace Infrastructure.Mappings
             };
         }
 
-        public static Product? MapToCartProduct(CartProductRecord? cartProductRecord, ProductRecord? productRecord)
+        public static Product MapToCartProduct(CartProductRecord cartProductRecord, ProductRecord productRecord)
         {
             if (cartProductRecord == null || productRecord == null)
             {
@@ -53,7 +50,7 @@ namespace Infrastructure.Mappings
             return product;
         }
 
-        public static CartProductRecord? MapToCartProductRecord(Guid cartId, Product product)
+        public static CartProductRecord MapToCartProductRecord(Guid cartId, Product product)
         {
             if (product == null)
             {

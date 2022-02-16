@@ -32,10 +32,10 @@ namespace Infrastructure.Repositories
                 commandType: CommandType.StoredProcedure);
         }
 
-        public Discount? Find(Guid id)
+        public Discount Find(Guid id)
         {
             var storedProc = "GetDiscount";
-            DiscountRecord? discountRecord;
+            DiscountRecord discountRecord;
 
             discountRecord = _unitOfWork.Connection.Query<DiscountRecord>(
                 storedProc,
@@ -47,10 +47,10 @@ namespace Infrastructure.Repositories
             return DiscountMapper.MapToDiscount(discountRecord);
         }
 
-        public Discount? FindByCode(string code)
+        public Discount FindByCode(string code)
         {
             var storedProc = "FindDiscountByCode";
-            DiscountRecord? discountRecord;
+            DiscountRecord discountRecord;
 
             discountRecord = _unitOfWork.Connection.Query<DiscountRecord>(
                 storedProc,

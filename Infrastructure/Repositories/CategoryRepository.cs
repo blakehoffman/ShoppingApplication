@@ -32,12 +32,12 @@ namespace Infrastructure.Repositories
                 commandType: CommandType.StoredProcedure);
         }
 
-        public Category? Find(Guid id)
+        public Category Find(Guid id)
         {
             var storedProc = "GetCategory";
-            CategoryRecord? categoryRecord;
+            CategoryRecord categoryRecord;
 
-            categoryRecord = _unitOfWork.Connection.Query<CategoryRecord?>(
+            categoryRecord = _unitOfWork.Connection.Query<CategoryRecord>(
                 storedProc,
                 new { id },
                 _unitOfWork.Transaction,
@@ -47,12 +47,12 @@ namespace Infrastructure.Repositories
             return CategoryMapper.MapToCategory(categoryRecord);
         }
 
-        public Category? FindByName(string name)
+        public Category FindByName(string name)
         {
             var storedProc = "GetCategoryByName";
-            CategoryRecord? categoryRecord;
+            CategoryRecord categoryRecord;
 
-            categoryRecord = _unitOfWork.Connection.Query<CategoryRecord?>(
+            categoryRecord = _unitOfWork.Connection.Query<CategoryRecord>(
                 storedProc,
                 new { name },
                 _unitOfWork.Transaction,

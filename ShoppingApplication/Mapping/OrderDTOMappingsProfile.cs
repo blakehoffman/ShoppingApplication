@@ -8,7 +8,7 @@ namespace Application.Mapping
     {
         public OrderDTOMappingsProfile()
         {
-            CreateMap<Order?, OrderDTO?>()
+            CreateMap<Order, OrderDTO>()
                 .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.GetTotal()));
             CreateMap<Product, OrderProductDTO>();
         }

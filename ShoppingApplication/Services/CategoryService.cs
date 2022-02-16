@@ -57,10 +57,10 @@ namespace Application.Services
             return resultDTO;
         }
 
-        public CategoryDTO? GetCategory(Guid id)
+        public CategoryDTO GetCategory(Guid id)
         {
             var category = _categoryRepository.Find(id);
-            return _mapper.Map<CategoryDTO?>(category);
+            return _mapper.Map<CategoryDTO>(category);
         }
 
         public List<CategoryDTO> GetCategories(Guid? parentId)

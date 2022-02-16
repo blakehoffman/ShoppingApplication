@@ -6,7 +6,7 @@ namespace Infrastructure.UnitOfWork
     public class UnitOfWork : IUnitOfWork
     {
         private readonly DbConnection _connection;
-        private DbTransaction? _transaction;
+        private DbTransaction _transaction;
 
         public UnitOfWork(DbConnection connection)
         {
@@ -15,7 +15,7 @@ namespace Infrastructure.UnitOfWork
         }
 
         public DbConnection Connection => _connection;
-        public DbTransaction? Transaction => _transaction;
+        public DbTransaction Transaction => _transaction;
 
         public void Begin()
         {

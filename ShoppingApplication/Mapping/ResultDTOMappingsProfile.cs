@@ -1,10 +1,7 @@
 ﻿using Application.DTO;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.Mapping
 {
@@ -12,7 +9,7 @@ namespace Application.Mapping
     {
         public ResultDTOMappingsProfile()
         {
-            CreateMap<IdentityResult?, ResultDTO?>()
+            CreateMap<IdentityResult, ResultDTO>()
                 .ForMember(resultDTO => resultDTO.Errors,
                     opt => opt.MapFrom(identityResult => identityResult.Errors.Select(e => e.Description).ToList()));
         }

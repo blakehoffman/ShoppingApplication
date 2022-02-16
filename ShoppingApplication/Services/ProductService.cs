@@ -6,8 +6,6 @@ using Domain.Models.Product;
 using Domain.Repositories;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -73,10 +71,10 @@ namespace Application.Services
             return resultDTO;
         }
 
-        public ProductDTO? GetProduct(Guid id)
+        public ProductDTO GetProduct(Guid id)
         {
             var product = _productRepository.Find(id);
-            return _mapper.Map<ProductDTO?>(product);
+            return _mapper.Map<ProductDTO>(product);
         }
 
         public List<ProductDTO> GetProducts()

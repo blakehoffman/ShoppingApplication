@@ -45,10 +45,10 @@ namespace Infrastructure.Repositories
             }
         }
 
-        public Cart? Find(Guid id)
+        public Cart Find(Guid id)
         {
             var storedProc = "GetCart";
-            CartRecord? cartRecord;
+            CartRecord cartRecord;
 
             cartRecord = _unitOfWork.Connection.Query<CartRecord>(
                 storedProc,
@@ -77,9 +77,9 @@ namespace Infrastructure.Repositories
 
             foreach (var cartProductRecord in cartProductRecords)
             {
-                ProductRecord? productRecord;
+                ProductRecord productRecord;
 
-                productRecord = _unitOfWork.Connection.Query<ProductRecord?>(
+                productRecord = _unitOfWork.Connection.Query<ProductRecord>(
                     storedProc,
                     new { Id = cartProductRecord.ProductId },
                     _unitOfWork.Transaction,
@@ -97,10 +97,10 @@ namespace Infrastructure.Repositories
             return CartMapper.MapToCart(cartRecord, products);
         }
 
-        public Cart? FindByUserId(string userId)
+        public Cart FindByUserId(string userId)
         {
             var storedProc = "GetCartByUserId";
-            CartRecord? cartRecord;
+            CartRecord cartRecord;
 
             cartRecord = _unitOfWork.Connection.Query<CartRecord>(
                 storedProc,
@@ -129,9 +129,9 @@ namespace Infrastructure.Repositories
 
             foreach (var cartProductRecord in cartProductRecords)
             {
-                ProductRecord? productRecord;
+                ProductRecord productRecord;
 
-                productRecord = _unitOfWork.Connection.Query<ProductRecord?>(
+                productRecord = _unitOfWork.Connection.Query<ProductRecord>(
                     storedProc,
                     new { Id = cartProductRecord.ProductId },
                     _unitOfWork.Transaction,

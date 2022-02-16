@@ -31,12 +31,12 @@ namespace Infrastructure.Repositories
                 commandType: CommandType.StoredProcedure);
         }
 
-        public Administrator? Find(string email)
+        public Administrator Find(string email)
         {
             var storedProc = "FindAdministrator";
-            AdministratorRecord? adminstratorRecord;
+            AdministratorRecord adminstratorRecord;
 
-            adminstratorRecord = _unitOfWork.Connection.Query<AdministratorRecord?>(
+            adminstratorRecord = _unitOfWork.Connection.Query<AdministratorRecord>(
                 storedProc,
                 new { email },
                 _unitOfWork.Transaction,

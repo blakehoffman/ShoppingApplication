@@ -45,10 +45,10 @@ namespace Infrastructure.Repositories
             }
         }
 
-        public Order? Find(Guid id)
+        public Order Find(Guid id)
         {
             var storedProc = "GetOrder";
-            OrderRecord? orderRecord;
+            OrderRecord orderRecord;
 
             orderRecord = _unitOfWork.Connection.Query<OrderRecord>(
                 storedProc,
@@ -79,9 +79,9 @@ namespace Infrastructure.Repositories
             {
                 foreach (var orderProductRecord in orderProductRecords)
                 {
-                    ProductRecord? productRecord;
+                    ProductRecord productRecord;
 
-                    productRecord = _unitOfWork.Connection.Query<ProductRecord?>(
+                    productRecord = _unitOfWork.Connection.Query<ProductRecord>(
                         storedProc,
                         new { Id = orderProductRecord.ProductId },
                         _unitOfWork.Transaction,
@@ -92,7 +92,7 @@ namespace Infrastructure.Repositories
                 }
             }
 
-            DiscountRecord? discountRecord = null;
+            DiscountRecord discountRecord = null;
             storedProc = "GetDiscount";
 
             discountRecord = _unitOfWork.Connection.Query<DiscountRecord>(
@@ -102,7 +102,7 @@ namespace Infrastructure.Repositories
                 commandType: CommandType.StoredProcedure)
                 .FirstOrDefault();
 
-            Discount? discount = OrderMapper.MapDiscountRecordToDiscount(discountRecord);
+            Discount discount = OrderMapper.MapDiscountRecordToDiscount(discountRecord);
             var order = OrderMapper.MapOrderRecordToOrder(orderRecord, products, discount);
 
             return order;
@@ -141,9 +141,9 @@ namespace Infrastructure.Repositories
                 {
                     foreach (var orderProductRecord in orderProductRecords)
                     {
-                        ProductRecord? productRecord;
+                        ProductRecord productRecord;
 
-                        productRecord = _unitOfWork.Connection.Query<ProductRecord?>(
+                        productRecord = _unitOfWork.Connection.Query<ProductRecord>(
                             storedProc,
                             new { Id = orderProductRecord.ProductId },
                             _unitOfWork.Transaction,
@@ -154,7 +154,7 @@ namespace Infrastructure.Repositories
                     }
                 }
 
-                DiscountRecord? discountRecord = null;
+                DiscountRecord discountRecord = null;
                 storedProc = "GetDiscount";
 
                 discountRecord = _unitOfWork.Connection.Query<DiscountRecord>(
@@ -164,7 +164,7 @@ namespace Infrastructure.Repositories
                     commandType: CommandType.StoredProcedure)
                     .FirstOrDefault();
 
-                Discount? discount = OrderMapper.MapDiscountRecordToDiscount(discountRecord);
+                Discount discount = OrderMapper.MapDiscountRecordToDiscount(discountRecord);
                 var order = OrderMapper.MapOrderRecordToOrder(orderRecord, products, discount);
                 orders.Add(order);
             }
@@ -206,9 +206,9 @@ namespace Infrastructure.Repositories
                 {
                     foreach (var orderProductRecord in orderProductRecords)
                     {
-                        ProductRecord? productRecord;
+                        ProductRecord productRecord;
 
-                        productRecord = _unitOfWork.Connection.Query<ProductRecord?>(
+                        productRecord = _unitOfWork.Connection.Query<ProductRecord>(
                             storedProc,
                             new { Id = orderProductRecord.ProductId },
                             _unitOfWork.Transaction,
@@ -219,7 +219,7 @@ namespace Infrastructure.Repositories
                     }
                 }
 
-                DiscountRecord? discountRecord = null;
+                DiscountRecord discountRecord = null;
                 storedProc = "GetDiscount";
 
                 discountRecord = _unitOfWork.Connection.Query<DiscountRecord>(
@@ -229,7 +229,7 @@ namespace Infrastructure.Repositories
                     commandType: CommandType.StoredProcedure)
                     .FirstOrDefault();
 
-                Discount? discount = OrderMapper.MapDiscountRecordToDiscount(discountRecord);
+                Discount discount = OrderMapper.MapDiscountRecordToDiscount(discountRecord);
                 var order = OrderMapper.MapOrderRecordToOrder(orderRecord, products, discount);
                 orders.Add(order);
             }

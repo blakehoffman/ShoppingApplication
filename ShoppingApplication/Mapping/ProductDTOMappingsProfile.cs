@@ -1,10 +1,6 @@
 ﻿using Application.DTO.Product;
 using AutoMapper;
 using Domain.Models.Product;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.Mapping
 {
@@ -12,7 +8,7 @@ namespace Application.Mapping
     {
         public ProductDTOMappingsProfile()
         {
-            CreateMap<Product?, ProductDTO?>();
+            CreateMap<Product, ProductDTO>();
         }
     }
 }

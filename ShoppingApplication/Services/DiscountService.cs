@@ -6,8 +6,6 @@ using Domain.Models.Discount;
 using Domain.Repositories;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -61,10 +59,10 @@ namespace Application.Services
             return resultDTO;
         }
 
-        public DiscountDTO? GetDiscount(Guid id)
+        public DiscountDTO GetDiscount(Guid id)
         {
             var discount = _discountRepository.Find(id);
-            return _mapper.Map<DiscountDTO?>(discount);
+            return _mapper.Map<DiscountDTO>(discount);
         }
 
         public List<DiscountDTO> GetDiscounts()

@@ -28,7 +28,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public ResultDTO? AddProductToCart(string userId, CartProductDTO productDTO)
+        public ResultDTO AddProductToCart(string userId, CartProductDTO productDTO)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -124,7 +124,7 @@ namespace Application.Services
             return new ResultDTO { Succeeded = true };
         }
 
-        public ResultDTO? DeleteProductFromCart(string userId, Guid productId)
+        public ResultDTO DeleteProductFromCart(string userId, Guid productId)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -159,7 +159,7 @@ namespace Application.Services
             return new ResultDTO { Succeeded = true };
         }
 
-        public CartDTO? GetCart(string userId)
+        public CartDTO GetCart(string userId)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -170,7 +170,7 @@ namespace Application.Services
             return _mapper.Map<CartDTO>(cart);
         }
 
-        public ResultDTO? UpdateProductQuantityInCart(string userId, UpdateProductQuantityInCartDTO updateProductQuantityDTO)
+        public ResultDTO UpdateProductQuantityInCart(string userId, UpdateProductQuantityInCartDTO updateProductQuantityDTO)
         {
             if (string.IsNullOrEmpty(userId))
             {

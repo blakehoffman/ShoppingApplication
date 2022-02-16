@@ -1,17 +1,12 @@
 ﻿using Domain.Models.Administrator;
 using Infrastructure.Records;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Mappings
 {
     public static class AdministratorMapper
     {
 
-        public static Administrator? MapToAdministrator(AdministratorRecord? administratorRecord)
+        public static Administrator MapToAdministrator(AdministratorRecord administratorRecord)
         {
             if (administratorRecord == null)
             {
@@ -21,7 +16,7 @@ namespace Infrastructure.Mappings
             return new Administrator(administratorRecord.Email);
         }
 
-        public static AdministratorRecord? MapToAdministratorRecord(Administrator? administrator)
+        public static AdministratorRecord MapToAdministratorRecord(Administrator administrator)
         {
             if (administrator == null)
             {
