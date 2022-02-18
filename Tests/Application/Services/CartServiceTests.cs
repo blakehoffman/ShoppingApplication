@@ -4,16 +4,12 @@ using Domain.Models.Cart;
 using Domain.Repositories;
 using Moq;
 using System;
-using Domain;
-using ProductModel = Domain.Models.Product.Product;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Application.DTO.Cart;
 using Application.DTO;
 using KellermanSoftware.CompareNetObjects;
 using Xunit;
+using Domain.UnitOfWork;
+using ProductModel = Domain.Models.Product.Product;
 
 namespace Tests.Application.Services
 {
@@ -22,12 +18,14 @@ namespace Tests.Application.Services
         private readonly Mock<ICartRepository> _cartRepositoryMock;
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<IProductRepository> _productRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
 
         public CartServiceTests()
         {
             _cartRepositoryMock = new Mock<ICartRepository>();
             _mapperMock = new Mock<IMapper>();
             _productRepositoryMock = new Mock<IProductRepository>();
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
         }
 
         [Fact]
@@ -41,9 +39,9 @@ namespace Tests.Application.Services
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .Returns(new ProductModel(productID, "test product", "description", Guid.NewGuid(), 3));
 
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object);
+            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
-            var cartProductDTO = new CartProductDTO
+            var cartProductDTO = new AddCartProductDTO
             {
                 Id = productID,
                 Quantity = 1
@@ -61,9 +59,9 @@ namespace Tests.Application.Services
         [Fact]
         public void AddProductToCart_NoUser_Error()
         {
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object);
+            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
-            var cartProductDTO = new CartProductDTO();
+            var cartProductDTO = new AddCartProductDTO();
 
             var expected = new ResultDTO
             {
@@ -87,9 +85,9 @@ namespace Tests.Application.Services
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .Returns((ProductModel)null);
 
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object);
+            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
-            var cartProductDTO = new CartProductDTO
+            var cartProductDTO = new AddCartProductDTO
             {
                 Id = Guid.NewGuid(),
                 Quantity = 1
@@ -119,9 +117,9 @@ namespace Tests.Application.Services
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .Returns(new ProductModel(productID, "test product", "description", Guid.NewGuid(), 3));
 
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object);
+            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
-            var cartProductDTO = new CartProductDTO
+            var cartProductDTO = new AddCartProductDTO
             {
                 Id = productID,
                 Quantity = 0
@@ -149,7 +147,7 @@ namespace Tests.Application.Services
             _cartRepositoryMock.Setup(cartRepository => cartRepository.Find(It.IsAny<Guid>()))
                 .Returns((Cart)null);
 
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object);
+            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
             var expected = new ResultDTO { Succeeded = true };
 
@@ -169,7 +167,7 @@ namespace Tests.Application.Services
             _cartRepositoryMock.Setup(cartRepository => cartRepository.Find(It.IsAny<Guid>()))
                 .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
 
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object);
+            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
             var expected = new ResultDTO
             {
@@ -187,7 +185,7 @@ namespace Tests.Application.Services
         [Fact]
         public void CreateCart_NoUserError()
         {
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object);
+            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
             var expected = new ResultDTO
             { 
@@ -208,7 +206,7 @@ namespace Tests.Application.Services
             _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
                 .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
 
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object);
+            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
             var expected = new ResultDTO
             {
@@ -236,7 +234,7 @@ namespace Tests.Application.Services
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .Returns(new ProductModel(productID, "test product", "description", Guid.NewGuid(), 25));
 
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object);
+            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
             var expected = new ResultDTO { Succeeded = true };
 
@@ -256,7 +254,7 @@ namespace Tests.Application.Services
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .Returns((ProductModel)null);
 
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object);
+            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
             var expected = new ResultDTO
             {
@@ -274,7 +272,7 @@ namespace Tests.Application.Services
         [Fact]
         public void DeleteProductFromCart_NoUser_Error()
         {
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object);
+            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
             var expected = new ResultDTO
             {
@@ -300,7 +298,7 @@ namespace Tests.Application.Services
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .Returns(new ProductModel(Guid.NewGuid(), "test product", "description", Guid.NewGuid(), 25));
 
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object);
+            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
             var updateProductQuantityInCartDTO = new UpdateProductQuantityInCartDTO
             {
@@ -320,7 +318,7 @@ namespace Tests.Application.Services
         [Fact]
         public void UpdateProductQuantityInCart_NoUser_Error()
         {
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object);
+            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
             var expected = new ResultDTO
             {
@@ -346,7 +344,7 @@ namespace Tests.Application.Services
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .Returns((ProductModel)null);
 
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object);
+            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
             var expected = new ResultDTO
             {

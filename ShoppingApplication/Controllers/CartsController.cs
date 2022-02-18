@@ -36,7 +36,7 @@ namespace Application.Controllers
         }
 
         [HttpPost("{cartId}/products/add")]
-        public ActionResult<ResultDTO> AddProductToCart(Guid cartId, [FromBody] CartProductDTO cartProduct)
+        public ActionResult<ResultDTO> AddProductToCart(Guid cartId, [FromBody] AddCartProductDTO cartProduct)
         {
             var user = this.User.Identity as ClaimsIdentity;
             var userId = user.FindFirst(ClaimTypes.NameIdentifier).Value;

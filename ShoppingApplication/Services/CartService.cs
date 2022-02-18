@@ -28,7 +28,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public ResultDTO AddProductToCart(string userId, CartProductDTO productDTO)
+        public ResultDTO AddProductToCart(string userId, AddCartProductDTO addCartProductDTO)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -48,12 +48,12 @@ namespace Application.Services
 
             var resultDTO = new ResultDTO();
 
-            if (productDTO.Quantity == 0)
+            if (addCartProductDTO.Quantity == 0)
             {
                 resultDTO.Errors.Add("Quantity must be greater than 0");
             }
 
-            var product = _productRepository.Find(productDTO.Id);
+            var product = _productRepository.Find(addCartProductDTO.Id);
 
             if (product == null)
             {
@@ -66,7 +66,7 @@ namespace Application.Services
                 return resultDTO;
             }
 
-            userCart.AddItem(new Product(product.Id, product.Name, product.Price, productDTO.Quantity));
+            userCart.AddItem(new Product(product.Id, product.Name, product.Price, addCartProductDTO.Quantity));
             
             try
             {

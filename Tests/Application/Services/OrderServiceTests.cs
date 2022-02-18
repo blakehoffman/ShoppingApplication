@@ -4,13 +4,11 @@ using Application.Services;
 using AutoMapper;
 using Domain.Models.Cart;
 using Domain.Repositories;
+using Domain.UnitOfWork;
 using KellermanSoftware.CompareNetObjects;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 using DiscountModel = Domain.Models.Discount.Discount;
 using ProductModel = Domain.Models.Product.Product;
@@ -24,6 +22,7 @@ namespace Tests.Application.Services
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<IOrderRepository> _orderRepositoryMock;
         private readonly Mock<IProductRepository> _productRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
 
         public OrderServiceTests()
         {
@@ -32,6 +31,7 @@ namespace Tests.Application.Services
             _mapperMock = new Mock<IMapper>();
             _orderRepositoryMock = new Mock<IOrderRepository>();
             _productRepositoryMock = new Mock<IProductRepository>();
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
         }
 
         [Fact]
@@ -51,7 +51,8 @@ namespace Tests.Application.Services
                 _discountRepositoryMock.Object,
                 _mapperMock.Object,
                 _orderRepositoryMock.Object,
-                _productRepositoryMock.Object);
+                _productRepositoryMock.Object,
+                _unitOfWorkMock.Object);
 
             var createOrderDTO = new CreateOrderDTO
             {
@@ -87,7 +88,8 @@ namespace Tests.Application.Services
                 _discountRepositoryMock.Object,
                 _mapperMock.Object,
                 _orderRepositoryMock.Object,
-                _productRepositoryMock.Object);
+                _productRepositoryMock.Object,
+                _unitOfWorkMock.Object);
 
             var createOrderDTO = new CreateOrderDTO
             {
@@ -124,7 +126,8 @@ namespace Tests.Application.Services
                 _discountRepositoryMock.Object,
                 _mapperMock.Object,
                 _orderRepositoryMock.Object,
-                _productRepositoryMock.Object);
+                _productRepositoryMock.Object,
+                _unitOfWorkMock.Object);
 
             var createOrderDTO = new CreateOrderDTO
             {
@@ -160,7 +163,8 @@ namespace Tests.Application.Services
                 _discountRepositoryMock.Object,
                 _mapperMock.Object,
                 _orderRepositoryMock.Object,
-                _productRepositoryMock.Object);
+                _productRepositoryMock.Object,
+                _unitOfWorkMock.Object);
 
             var expected = new ResultDTO
             {
@@ -189,7 +193,8 @@ namespace Tests.Application.Services
                 _discountRepositoryMock.Object,
                 _mapperMock.Object,
                 _orderRepositoryMock.Object,
-                _productRepositoryMock.Object);
+                _productRepositoryMock.Object,
+                _unitOfWorkMock.Object);
 
             var expected = new ResultDTO
             {
