@@ -28,7 +28,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public ResultDTO AddProductToCart(string userId, AddCartProductDTO addCartProductDTO)
+        public ResultDTO AddProductToCart(string userId, Guid productId, AddCartProductDTO addCartProductDTO)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -46,18 +46,18 @@ namespace Application.Services
                 return null;
             }
 
+            var product = _productRepository.Find(productId);
+
+            if (product == null)
+            {
+                return null;
+            }
+
             var resultDTO = new ResultDTO();
 
             if (addCartProductDTO.Quantity == 0)
             {
                 resultDTO.Errors.Add("Quantity must be greater than 0");
-            }
-
-            var product = _productRepository.Find(addCartProductDTO.Id);
-
-            if (product == null)
-            {
-                resultDTO.Errors.Add("Product not found");
             }
 
             if (resultDTO.Errors.Count > 0)
@@ -66,7 +66,7 @@ namespace Application.Services
                 return resultDTO;
             }
 
-            userCart.AddItem(new Product(product.Id, product.Name, product.Price, addCartProductDTO.Quantity));
+            userCart.AddItem(new Product(productId, product.Name, product.Price, addCartProductDTO.Quantity));
             
             try
             {
@@ -146,11 +146,7 @@ namespace Application.Services
 
             if (product == null)
             {
-                return new ResultDTO
-                {
-                    Succeeded = false,
-                    Errors = { "Product not found" }
-                };
+                return null;
             }
 
             userCart.RemoveItem(productId);
@@ -168,41 +164,6 @@ namespace Application.Services
 
             var cart = _cartRepository.FindByUserId(userId);
             return _mapper.Map<CartDTO>(cart);
-        }
-
-        public ResultDTO UpdateProductQuantityInCart(string userId, UpdateProductQuantityInCartDTO updateProductQuantityDTO)
-        {
-            if (string.IsNullOrEmpty(userId))
-            {
-                return new ResultDTO
-                {
-                    Succeeded = false,
-                    Errors = { "Can't edit a cart when user isn't signed in" }
-                };
-            }
-
-            var userCart = _cartRepository.FindByUserId(userId);
-
-            if (userCart == null)
-            {
-                return null;
-            }
-
-            var product = _productRepository.Find(updateProductQuantityDTO.ProductId);
-
-            if (product == null)
-            {
-                return new ResultDTO
-                {
-                    Succeeded = false,
-                    Errors = { "Product not found" }
-                };
-            }
-
-            userCart.UpdateProductQuantity(updateProductQuantityDTO.ProductId, updateProductQuantityDTO.Quantity);
-            _cartRepository.Update(userCart);
-
-            return new ResultDTO { Succeeded = true };
         }
     }
 }

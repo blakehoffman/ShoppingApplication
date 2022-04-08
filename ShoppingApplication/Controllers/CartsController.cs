@@ -20,7 +20,7 @@ namespace Application.Controllers
             _cartService = cartService;
         }
 
-        [HttpGet]
+        [HttpGet("me")]
         public ActionResult<CartDTO> GetCart()
         {
             var user = this.User.Identity as ClaimsIdentity;
@@ -35,12 +35,17 @@ namespace Application.Controllers
             return cart;
         }
 
-        [HttpPost("{cartId}/products/add")]
-        public ActionResult<ResultDTO> AddProductToCart(Guid cartId, [FromBody] AddCartProductDTO cartProduct)
+        [HttpPut("{cartId}/products/{productId}")]
+        public ActionResult<ResultDTO> AddProductToCart(Guid cartId, Guid productId, [FromBody] AddCartProductDTO cartProduct)
         {
+            if (cartProduct.Id != null && cartProduct.Id != productId)
+            {
+                return BadRequest();
+            }
+
             var user = this.User.Identity as ClaimsIdentity;
             var userId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var result = _cartService.AddProductToCart(userId, cartProduct);
+            var result = _cartService.AddProductToCart(userId, productId, cartProduct);
 
             if (result == null)
             {
@@ -50,7 +55,7 @@ namespace Application.Controllers
             return result;
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         public ActionResult<ResultDTO> CreateCart([FromBody] Guid cartId)
         {
             var user = this.User.Identity as ClaimsIdentity;
@@ -60,8 +65,8 @@ namespace Application.Controllers
             return result;
         }
 
-        [HttpPost("{cartId}/products/delete")]
-        public ActionResult<ResultDTO> DeleteProductFromCart(Guid cartId, [FromBody] Guid productId)
+        [HttpDelete("{cartId}/products/{productId}")]
+        public ActionResult<ResultDTO> DeleteProductFromCart(Guid cartId, Guid productId)
         {
             var user = this.User.Identity as ClaimsIdentity;
             var userId = user.FindFirst(ClaimTypes.NameIdentifier).Value;

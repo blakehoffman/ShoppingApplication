@@ -45,7 +45,7 @@ namespace Application.Controllers
             }
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         [Authorize(Policy = "Admin")]
         public ActionResult<ResultDTO> CreateProduct(CreateProductDTO createProductDTO)
         {
