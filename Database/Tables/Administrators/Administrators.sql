@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[Administrators]
 (
     Id				int             NOT NULL IDENTITY(1, 1),
-    Email			varchar(100)    NOT NULL UNIQUE,
+	Email			varchar(100)	NOT NULL UNIQUE,
 	SysStartTime	datetime2		GENERATED ALWAYS AS ROW START NOT NULL,
 	SysEndTime		datetime2		GENERATED ALWAYS AS ROW END NOT NULL,
 	PERIOD FOR SYSTEM_TIME (SysStartTime, SysEndTime),
