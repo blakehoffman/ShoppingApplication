@@ -27,7 +27,7 @@ namespace Application.Controllers
             return _orderService.GetOrders();
         }
 
-        [HttpGet("by-user")]
+        [HttpGet("me")]
         public List<OrderDTO> GetOrdersByUser()
         {
             var user = this.User.Identity as ClaimsIdentity;
@@ -36,7 +36,7 @@ namespace Application.Controllers
             return _orderService.GetOrders(userId);
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         public ActionResult<ResultDTO> CreateOrder([FromBody] CreateOrderDTO createOrderDTO)
         {
             var user = this.User.Identity as ClaimsIdentity;

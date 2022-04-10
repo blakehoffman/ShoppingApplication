@@ -39,7 +39,7 @@ namespace Infrastructure.Repositories
 
                 _unitOfWork.Connection.Execute(
                     storedProc,
-                    null,
+                    orderProductRecord,
                     _unitOfWork.Transaction,
                     commandType: CommandType.StoredProcedure);
             }

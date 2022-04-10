@@ -3,33 +3,30 @@ using Application.DTO.Administrator;
 using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Policy = "Admin")]
-    public class AdminController : Controller
+    public class AdministratorsController : Controller
     {
         private readonly IAdminService _adminService;
 
-        public AdminController(IAdminService adminService)
+        public AdministratorsController(IAdminService adminService)
         {
             _adminService = adminService;
         }
 
-        [HttpGet("administrators")]
+        [HttpGet]
         public ActionResult<List<AdministratorDTO>> GetAllAdministrators()
         {
             return _adminService.GetAdministrators();
         }
 
 
-        [HttpPost("create-administrator")]
+        [HttpPost]
         public ActionResult<ResultDTO> Create(CreateAdministratorDTO createAdministratorDTO)
         {
             var result = _adminService.CreateAdministrator(createAdministratorDTO);

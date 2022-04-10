@@ -77,36 +77,6 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void AddProductToCart_NoneExistentProduct_Error()
-        {
-            _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
-                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
-
-            _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
-                .Returns((ProductModel)null);
-
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
-
-            var cartProductDTO = new AddCartProductDTO
-            {
-                Id = Guid.NewGuid(),
-                Quantity = 1
-            };
-
-            var expected = new ResultDTO
-            {
-                Succeeded = false,
-                Errors = { "Product not found" }
-            };
-
-            var actual = cartService.AddProductToCart("user", cartProductDTO);
-
-            var compareLogic = new CompareLogic();
-            var result = compareLogic.Compare(expected, actual);
-            Assert.True(result.AreEqual);
-        }
-
-        [Fact]
         public void AddProductToCart_QuantityLessThan1_Error()
         {
             var productID = Guid.NewGuid();
@@ -246,30 +216,6 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void DeleteProductFromCart_NonExistentProduct_Error()
-        {
-            _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
-                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
-
-            _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
-                .Returns((ProductModel)null);
-
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
-
-            var expected = new ResultDTO
-            {
-                Succeeded = false,
-                Errors = { "Product not found" }
-            };
-
-            var actual = cartService.DeleteProductFromCart("user", Guid.NewGuid());
-
-            var compareLogic = new CompareLogic();
-            var result = compareLogic.Compare(expected, actual);
-            Assert.True(result.AreEqual);
-        }
-
-        [Fact]
         public void DeleteProductFromCart_NoUser_Error()
         {
             var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
@@ -281,78 +227,6 @@ namespace Tests.Application.Services
             };
 
             var actual = cartService.DeleteProductFromCart("", Guid.NewGuid());
-
-            var compareLogic = new CompareLogic();
-            var result = compareLogic.Compare(expected, actual);
-            Assert.True(result.AreEqual);
-        }
-
-        [Fact]
-        public void UpdateProductQuantityInCart()
-        {
-            var productID = Guid.NewGuid();
-
-            _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
-                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
-
-            _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
-                .Returns(new ProductModel(Guid.NewGuid(), "test product", "description", Guid.NewGuid(), 25));
-
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
-
-            var updateProductQuantityInCartDTO = new UpdateProductQuantityInCartDTO
-            {
-                ProductId = productID,
-                Quantity = 50,
-            };
-
-            var expected = new ResultDTO { Succeeded = true };
-
-            var actual = cartService.UpdateProductQuantityInCart("User", updateProductQuantityInCartDTO);
-
-            var compareLogic = new CompareLogic();
-            var result = compareLogic.Compare(expected, actual);
-            Assert.True(result.AreEqual);
-        }
-
-        [Fact]
-        public void UpdateProductQuantityInCart_NoUser_Error()
-        {
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
-
-            var expected = new ResultDTO
-            {
-                Succeeded = false,
-                Errors = { "Can't edit a cart when user isn't signed in" }
-            };
-
-            var actual = cartService.UpdateProductQuantityInCart("", new UpdateProductQuantityInCartDTO());
-
-            var compareLogic = new CompareLogic();
-            var result = compareLogic.Compare(expected, actual);
-            Assert.True(result.AreEqual);
-        }
-
-        [Fact]
-        public void UpdateProductQuantityInCart_NonExistentProduct_Error()
-        {
-            var productID = Guid.NewGuid();
-
-            _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
-                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
-
-            _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
-                .Returns((ProductModel)null);
-
-            var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
-
-            var expected = new ResultDTO
-            {
-                Succeeded = false,
-                Errors = { "Product not found" }
-            };
-
-            var actual = cartService.UpdateProductQuantityInCart("User", new UpdateProductQuantityInCartDTO());
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);

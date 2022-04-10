@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Application.Controllers
 {
@@ -41,7 +39,7 @@ namespace Application.Controllers
             return discounts;
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         [Authorize(Policy = "Admin")]
         public ActionResult<ResultDTO> CreateDiscount([FromBody] CreateDiscountDTO createDiscountDTO)
         {

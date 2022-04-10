@@ -39,7 +39,7 @@ namespace Application.Controllers
             return category;
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         [Authorize(Policy = "Admin")]
         public ActionResult<ResultDTO> CreateCategory([FromBody] CreateCategoryDTO createCategoryDTO)
         {
