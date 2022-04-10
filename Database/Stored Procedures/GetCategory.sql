@@ -7,8 +7,8 @@ BEGIN
 	IF NOT @Id IN (SELECT Id FROM Categories WHERE Hid.GetLevel() = 1)
 	BEGIN
 		SET @ParentId = (SELECT Id
-						   FROM Categories
-						  WHERE Hid IN (SELECT Hid.GetAncestor(Hid.GetLevel() - 1) FROM Categories WHERE Id = @Id))
+                           FROM Categories
+                          WHERE Hid IN (SELECT Hid.GetAncestor(Hid.GetLevel() - 1) FROM Categories WHERE Id = @Id))
 	END
 
 	SELECT Id, Name, @ParentId AS ParentId

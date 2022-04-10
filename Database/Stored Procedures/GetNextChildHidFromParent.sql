@@ -8,11 +8,11 @@ BEGIN
 	DECLARE @Stmt nvarchar(200);
 	
 	SET @Stmt =	N'(SELECT @LastNode = MAX(Hid)
-				     FROM ' + @TableName +
-				    ' WHERE Hid.GetAncestor(1) = @Parent)'
+                     FROM ' + @TableName +
+                   'WHERE Hid.GetAncestor(1) = @Parent)'
 	
 	DECLARE @Params nvarchar(100) = N'@Parent hierarchyid,
-									  @LastNode hierarchyid OUTPUT'
+                                      @LastNode hierarchyid OUTPUT'
 
 	EXECUTE sp_executesql @stmt, @Params, @Parent = @ParentHid, @LastNode = @LastNodeOut OUTPUT
 
