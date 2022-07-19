@@ -49,7 +49,7 @@ namespace Tests.Application.Services
 
             var expected = new ResultDTO { Succeeded = true };
 
-            var actual = cartService.AddProductToCart("user", cartProductDTO);
+            var actual = cartService.AddProductToCart("user", Guid.NewGuid(), cartProductDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -69,7 +69,7 @@ namespace Tests.Application.Services
                 Errors = { "Can't add to a cart when user is not logged in" }
             };
 
-            var actual = cartService.AddProductToCart("", cartProductDTO);
+            var actual = cartService.AddProductToCart("", Guid.NewGuid(), cartProductDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -101,7 +101,7 @@ namespace Tests.Application.Services
                 Errors = { "Quantity must be greater than 0" }
             };
 
-            var actual = cartService.AddProductToCart("user", cartProductDTO);
+            var actual = cartService.AddProductToCart("user", Guid.NewGuid(), cartProductDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
