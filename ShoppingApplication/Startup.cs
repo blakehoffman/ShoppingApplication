@@ -111,7 +111,7 @@ namespace Application
                 options.AddPolicy("CORSPolicy", builder =>
                 {
                     builder
-                        .WithOrigins("http://localhost:4200")
+                        .WithOrigins("https://localhost:5277")
                         .AllowAnyMethod()
                         .AllowAnyHeader();
                 });
