@@ -9,6 +9,7 @@ using KellermanSoftware.CompareNetObjects;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 using DiscountModel = Domain.Models.Discount.Discount;
 using ProductModel = Domain.Models.Product.Product;
@@ -35,10 +36,10 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateOrder()
+        public async Task CreateOrder()
         {
             _discountRepositoryMock.Setup(discountRepository => discountRepository.FindByCode(It.IsAny<string>()))
-                .ReturnsAsync(new DiscountModel(Guid.NewGuid(), "test", 0.25));
+                .ReturnsAsync(new DiscountModel(Guid.NewGuid(), "test", 0.25m));
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .Returns(new ProductModel(Guid.NewGuid(), "test", "description", Guid.NewGuid(), 25));
@@ -65,7 +66,7 @@ namespace Tests.Application.Services
 
             var expected = new ResultDTO { Succeeded = true };
 
-            var actual = orderService.CreateOrder("user", createOrderDTO);
+            var actual = await orderService.CreateOrder("user", createOrderDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -73,12 +74,12 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateOrder_InvalidDiscount_Error()
+        public async Task CreateOrder_InvalidDiscount_Error()
         {
             var productID = Guid.NewGuid();
 
             _discountRepositoryMock.Setup(discountRepository => discountRepository.FindByCode(It.IsAny<string>()))
-                .ReturnsAsync(new DiscountModel(Guid.NewGuid(), "test", 0.25));
+                .ReturnsAsync(new DiscountModel(Guid.NewGuid(), "test", 0.25m));
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .Returns((ProductModel)null);
@@ -105,7 +106,7 @@ namespace Tests.Application.Services
                 Errors = new List<string> { $"Product {productID} does not exist" }
             };
 
-            var actual = orderService.CreateOrder("user", createOrderDTO);
+            var actual = await orderService.CreateOrder("user", createOrderDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -113,7 +114,7 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateOrder_InvalidProduct_Error()
+        public async Task CreateOrder_InvalidProduct_Error()
         {
             _discountRepositoryMock.Setup(discountRepository => discountRepository.FindByCode(It.IsAny<string>()))
                 .ReturnsAsync((DiscountModel)null);
@@ -144,7 +145,7 @@ namespace Tests.Application.Services
                 Errors = new List<string> { "Discount doesn't exist" }
             };
 
-            var actual = orderService.CreateOrder("user", createOrderDTO);
+            var actual = await orderService.CreateOrder("user", createOrderDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -152,7 +153,7 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateOrder_NullUsername_Error()
+        public async Task CreateOrder_NullUsername_Error()
         {
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
@@ -172,7 +173,7 @@ namespace Tests.Application.Services
                 Errors = new List<string> { "User ID cannot be empty" }
             };
 
-            var actual = orderService.CreateOrder(null, new CreateOrderDTO
+            var actual = await orderService.CreateOrder(null, new CreateOrderDTO
             {
                 Products = new List<CreateOrderProductDTO>
                 {
@@ -186,7 +187,7 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateOrder_ZeroProducts_Error()
+        public async Task CreateOrder_ZeroProducts_Error()
         {
             var orderService = new OrderService(
                 _cartRepositoryMock.Object,
@@ -202,7 +203,7 @@ namespace Tests.Application.Services
                 Errors = new List<string> { "In order to create an order, there must be at least one product attached to it" }
             };
 
-            var actual = orderService.CreateOrder("test", new CreateOrderDTO());
+            var actual = await orderService.CreateOrder("test", new CreateOrderDTO());
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);

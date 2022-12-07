@@ -8,7 +8,7 @@ namespace Domain.Models.Discount
 {
     public class Discount
     {
-        public Discount(Guid id, string code, double amount)
+        public Discount(Guid id, string code, decimal amount)
         {
             if (id == Guid.Empty)
             {
@@ -37,7 +37,7 @@ namespace Domain.Models.Discount
 
         public Guid Id { get; }
         public string Code { get; }
-        public double Amount { get; }
+        public decimal Amount { get; }
         public bool Active { get; set; }
     }
 }

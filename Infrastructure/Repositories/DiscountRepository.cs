@@ -1,5 +1,4 @@
-﻿using Dapper;
-using Domain.Models.Discount;
+﻿using Domain.Models.Discount;
 using Domain.Repositories;
 using Domain.UnitOfWork;
 using Infrastructure.Contexts;
@@ -7,8 +6,6 @@ using Infrastructure.Mappings;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
@@ -26,7 +23,6 @@ namespace Infrastructure.Repositories
 
         public async Task Add(Discount discount)
         {
-            var storedProc = "InsertDiscount";
             var discountEntity = DiscountMapper.MapToDiscountEntity(discount);
 
             _applicationDbContext.Discounts.Add(discountEntity);

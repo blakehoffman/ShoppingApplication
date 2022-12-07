@@ -73,13 +73,13 @@ namespace Domain.Models.Order
             }
         }
 
-        public double GetTotal()
+        public decimal GetTotal()
         {
             var productTotal = Products.Sum(p => p.Price * p.Quantity);
 
             if (_discount != null)
             {
-                return (double)productTotal * _discount.Amount;
+                return (decimal)productTotal * _discount.Amount;
             }
 
             return productTotal;

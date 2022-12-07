@@ -7,10 +7,8 @@ using AutoMapper;
 using Domain.Repositories;
 using Infrastructure.Records;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -153,9 +151,6 @@ namespace Application.Services
                 Email = registerDTO.Email,
                 UserName = registerDTO.Username
             };
-
-            var test = await _roleManager.CreateAsync(new IdentityRole("customer"));
-            var test2 = await _roleManager.CreateAsync(new IdentityRole("Admin"));
 
             var registrationResult = await _userManager.CreateAsync(user, registerDTO.Password);
 

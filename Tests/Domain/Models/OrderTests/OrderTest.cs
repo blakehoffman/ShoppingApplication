@@ -1,6 +1,5 @@
 using Domain.Models.Order;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -73,7 +72,7 @@ namespace Tests.Domain.Models.OrderTests
         {
             var product = new Product(Guid.NewGuid(), "test name", 10, 1);
             var productTwo = new Product(Guid.NewGuid(), "test name", 10, 1);
-            var order = new Order(Guid.NewGuid(), "user", DateTimeOffset.UtcNow, new Discount(Guid.NewGuid(), 0.25));
+            var order = new Order(Guid.NewGuid(), "user", DateTimeOffset.UtcNow, new Discount(Guid.NewGuid(), 0.25m));
             order.AddItem(product);
             order.AddItem(productTwo);
 

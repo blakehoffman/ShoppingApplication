@@ -2,6 +2,8 @@
 using Infrastructure.Records;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace Infrastructure.Contexts
 {
@@ -13,5 +15,13 @@ namespace Infrastructure.Contexts
         }
 
         public DbSet<Discount> Discounts { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder
+                .ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        }
     }
 }
