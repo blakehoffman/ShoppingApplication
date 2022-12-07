@@ -38,7 +38,7 @@ namespace Tests.Application.Services
         public void CreateOrder()
         {
             _discountRepositoryMock.Setup(discountRepository => discountRepository.FindByCode(It.IsAny<string>()))
-                .Returns(new DiscountModel(Guid.NewGuid(), "test", 0.25));
+                .ReturnsAsync(new DiscountModel(Guid.NewGuid(), "test", 0.25));
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .Returns(new ProductModel(Guid.NewGuid(), "test", "description", Guid.NewGuid(), 25));
@@ -78,7 +78,7 @@ namespace Tests.Application.Services
             var productID = Guid.NewGuid();
 
             _discountRepositoryMock.Setup(discountRepository => discountRepository.FindByCode(It.IsAny<string>()))
-                .Returns(new DiscountModel(Guid.NewGuid(), "test", 0.25));
+                .ReturnsAsync(new DiscountModel(Guid.NewGuid(), "test", 0.25));
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .Returns((ProductModel)null);
@@ -116,7 +116,7 @@ namespace Tests.Application.Services
         public void CreateOrder_InvalidProduct_Error()
         {
             _discountRepositoryMock.Setup(discountRepository => discountRepository.FindByCode(It.IsAny<string>()))
-                .Returns((DiscountModel)null);
+                .ReturnsAsync((DiscountModel)null);
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .Returns(new ProductModel(Guid.NewGuid(), "test", "description", Guid.NewGuid(), 25));

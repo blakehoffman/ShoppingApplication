@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Application.Controllers
 {
@@ -20,9 +21,9 @@ namespace Application.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<DiscountDTO> GetDiscount(Guid id)
+        public async Task<ActionResult<DiscountDTO>> GetDiscount(Guid id)
         {
-            var discount = _discountService.GetDiscount(id);
+            var discount = await _discountService.GetDiscount(id);
 
             if (discount == null)
             {
@@ -33,17 +34,17 @@ namespace Application.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<DiscountDTO>> GetDiscounts()
+        public async Task<ActionResult<List<DiscountDTO>>> GetDiscounts()
         {
-            var discounts = _discountService.GetDiscounts();
+            var discounts = await _discountService.GetDiscounts();
             return discounts;
         }
 
         [HttpPost]
         [Authorize(Policy = "Admin")]
-        public ActionResult<ResultDTO> CreateDiscount([FromBody] CreateDiscountDTO createDiscountDTO)
+        public async Task<ActionResult<ResultDTO>> CreateDiscount([FromBody] CreateDiscountDTO createDiscountDTO)
         {
-            var result = _discountService.CreateDiscount(createDiscountDTO);
+            var result = await _discountService.CreateDiscount(createDiscountDTO);
             return result;
         }
     }

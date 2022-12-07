@@ -154,6 +154,9 @@ namespace Application.Services
                 UserName = registerDTO.Username
             };
 
+            var test = await _roleManager.CreateAsync(new IdentityRole("customer"));
+            var test2 = await _roleManager.CreateAsync(new IdentityRole("Admin"));
+
             var registrationResult = await _userManager.CreateAsync(user, registerDTO.Password);
 
             if (!registrationResult.Succeeded)

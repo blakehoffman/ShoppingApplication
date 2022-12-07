@@ -7,6 +7,7 @@ using Domain.Repositories;
 using Domain.UnitOfWork;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -36,7 +37,7 @@ namespace Application.Services
 
         }
 
-        public ResultDTO CreateOrder(string userID, CreateOrderDTO createOrderDTO)
+        public async Task<ResultDTO> CreateOrder(string userID, CreateOrderDTO createOrderDTO)
         {
             var resultDTO = new ResultDTO();
 
@@ -61,7 +62,7 @@ namespace Application.Services
                 return resultDTO;
             }
 
-            var discount = _discountRepository.FindByCode(createOrderDTO.Discount);
+            var discount = await _discountRepository.FindByCode(createOrderDTO.Discount);
 
             if (!string.IsNullOrWhiteSpace(createOrderDTO.Discount) && discount == null)
             {

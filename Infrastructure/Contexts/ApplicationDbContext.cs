@@ -1,11 +1,7 @@
-﻿using Infrastructure.Records;
+﻿using Infrastructure.Models;
+using Infrastructure.Records;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Contexts
 {
@@ -15,5 +11,7 @@ namespace Infrastructure.Contexts
         {
 
         }
+
+        public DbSet<Discount> Discounts { get; set; }
     }
 }

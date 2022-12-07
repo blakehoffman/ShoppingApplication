@@ -2,85 +2,69 @@
 using Domain.Models.Discount;
 using Domain.Repositories;
 using Domain.UnitOfWork;
+using Infrastructure.Contexts;
 using Infrastructure.Mappings;
-using Infrastructure.Records;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
     public class DiscountRepository : IDiscountRepository
     {
+        private readonly ApplicationDbContext _applicationDbContext;
         private readonly IUnitOfWork _unitOfWork;
 
-        public DiscountRepository(IUnitOfWork unitOfWork)
+        public DiscountRepository(ApplicationDbContext applicationDbContext, IUnitOfWork unitOfWork)
         {
+            _applicationDbContext = applicationDbContext;
             _unitOfWork = unitOfWork;
         }
 
-        public void Add(Discount discount)
+        public async Task Add(Discount discount)
         {
             var storedProc = "InsertDiscount";
-            var discountRecord = DiscountMapper.MapToDiscountRecord(discount);
+            var discountEntity = DiscountMapper.MapToDiscountEntity(discount);
 
-            _unitOfWork.Connection.Execute(
-                storedProc,
-                discountRecord,
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure);
+            _applicationDbContext.Discounts.Add(discountEntity);
+            await _applicationDbContext.SaveChangesAsync();
         }
 
-        public Discount Find(Guid id)
+        public async Task<Discount> Find(Guid id)
         {
-            var storedProc = "GetDiscount";
-            DiscountRecord discountRecord;
+            var discount = await _applicationDbContext.Discounts
+                .AsNoTracking()
+                .FirstOrDefaultAsync(discount => discount.Id == id);
 
-            discountRecord = _unitOfWork.Connection.Query<DiscountRecord>(
-                storedProc,
-                new { id },
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)
-                .FirstOrDefault();
-
-            return DiscountMapper.MapToDiscount(discountRecord);
+            return DiscountMapper.MapToDiscount(discount);
         }
 
-        public Discount FindByCode(string code)
+        public async Task<Discount> FindByCode(string code)
         {
-            var storedProc = "FindDiscountByCode";
-            DiscountRecord discountRecord;
+            var discount = await _applicationDbContext.Discounts
+                .AsNoTracking()
+                .FirstOrDefaultAsync(discount => discount.Code == code);
 
-            discountRecord = _unitOfWork.Connection.Query<DiscountRecord>(
-                storedProc,
-                new { code },
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)
-                .FirstOrDefault();
-
-            return DiscountMapper.MapToDiscount(discountRecord);
+            return DiscountMapper.MapToDiscount(discount);
         }
 
-        public List<Discount> GetAll()
+        public async Task<List<Discount>> GetAll()
         {
-            var storedProc = "GetDiscounts";
-            List<DiscountRecord> discountRecords;
+            var discounts = await _applicationDbContext.Discounts
+                .AsNoTracking()
+                .ToListAsync();
 
-            discountRecords = _unitOfWork.Connection.Query<DiscountRecord>(
-                storedProc,
-                transaction: _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)
-                .ToList();
+            var domainDiscounts = new List<Discount>();
 
-            var discounts = new List<Discount>();
-
-            foreach (var discount in discountRecords)
+            foreach (var discount in discounts)
             {
-                discounts.Add(DiscountMapper.MapToDiscount(discount));
+                domainDiscounts.Add(DiscountMapper.MapToDiscount(discount));
             }
 
-            return discounts;
+            return domainDiscounts;
         }
     }
 }

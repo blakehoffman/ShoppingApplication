@@ -150,7 +150,7 @@ namespace Tests.Application.Services
         public void CreateDiscount_DuplicateCode_Error()
         {
             _discountRepositoryMock.Setup(discountRepository => discountRepository.FindByCode(It.IsAny<string>()))
-                .Returns(new Discount(Guid.NewGuid(), "Test code", 0.25));
+                .ReturnsAsync(new Discount(Guid.NewGuid(), "Test code", 0.25));
 
 
             var discountService = new DiscountService(_discountRepositoryMock.Object, _mapperMock.Object);

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Application.Controllers
 {
@@ -37,12 +38,12 @@ namespace Application.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ResultDTO> CreateOrder([FromBody] CreateOrderDTO createOrderDTO)
+        public async Task<ActionResult<ResultDTO>> CreateOrder([FromBody] CreateOrderDTO createOrderDTO)
         {
             var user = this.User.Identity as ClaimsIdentity;
             var userId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            return _orderService.CreateOrder(userId, createOrderDTO);
+            return await _orderService.CreateOrder(userId, createOrderDTO);
         }
     }
 }

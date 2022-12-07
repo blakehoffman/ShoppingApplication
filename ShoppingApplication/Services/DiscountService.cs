@@ -6,6 +6,7 @@ using Domain.Models.Discount;
 using Domain.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -19,7 +20,7 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public ResultDTO CreateDiscount(CreateDiscountDTO createDiscountDTO)
+        public async Task<ResultDTO> CreateDiscount(CreateDiscountDTO createDiscountDTO)
         {
             var resultDTO = new ResultDTO();
 
@@ -35,7 +36,7 @@ namespace Application.Services
                 resultDTO.Errors.Add("Discount amount cannot be less than or equal to 0");
             }
 
-            if (_discountRepository.FindByCode(createDiscountDTO.Code) != null)
+            if (await _discountRepository.FindByCode(createDiscountDTO.Code) != null)
             {
                 resultDTO.Errors.Add("A discount with this code already exists");
             }
@@ -53,21 +54,21 @@ namespace Application.Services
                 discount.Active = true;
             }
 
-            _discountRepository.Add(discount);
+            await _discountRepository.Add(discount);
             resultDTO.Succeeded = true;
 
             return resultDTO;
         }
 
-        public DiscountDTO GetDiscount(Guid id)
+        public async Task<DiscountDTO> GetDiscount(Guid id)
         {
-            var discount = _discountRepository.Find(id);
+            var discount = await _discountRepository.Find(id);
             return _mapper.Map<DiscountDTO>(discount);
         }
 
-        public List<DiscountDTO> GetDiscounts()
+        public async Task<List<DiscountDTO>> GetDiscounts()
         {
-            var discounts = _discountRepository.GetAll();
+            var discounts = await _discountRepository.GetAll();
             return _mapper.Map<List<DiscountDTO>>(discounts);
         }
     }

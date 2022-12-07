@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <UserSecretsId>aspnet-ShoppingApplication-587DA22E-8309-40D4-86AC-F7D9CECF1C8D</UserSecretsId>
   </PropertyGroup>
 
