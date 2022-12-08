@@ -44,7 +44,7 @@ namespace Tests.Application.Services
         public async void Register()
         {
             _administratorRepositoryMock.Setup(administratorRepository => administratorRepository.Find(It.IsAny<string>()))
-                .Returns((Administrator)null);
+                .ReturnsAsync((Administrator)null);
 
             _userManagerMock.Setup(userManager => userManager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Success);
@@ -79,7 +79,7 @@ namespace Tests.Application.Services
         public async void Register_FirstnameGreaterThan100Characters_Error()
         {
             _administratorRepositoryMock.Setup(administratorRepository => administratorRepository.Find(It.IsAny<string>()))
-                .Returns((Administrator)null);
+                .ReturnsAsync((Administrator)null);
 
             _userManagerMock.Setup(userManager => userManager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Success);
@@ -118,7 +118,7 @@ namespace Tests.Application.Services
         public async void Register_EmptyFirstname_Error()
         {
             _administratorRepositoryMock.Setup(administratorRepository => administratorRepository.Find(It.IsAny<string>()))
-                .Returns((Administrator)null);
+                .ReturnsAsync((Administrator)null);
 
             _userManagerMock.Setup(userManager => userManager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Success);
@@ -156,7 +156,7 @@ namespace Tests.Application.Services
         public async void Register_NullFirstname_Error()
         {
             _administratorRepositoryMock.Setup(administratorRepository => administratorRepository.Find(It.IsAny<string>()))
-                .Returns((Administrator)null);
+                .ReturnsAsync((Administrator)null);
 
             _userManagerMock.Setup(userManager => userManager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Success);
@@ -195,7 +195,7 @@ namespace Tests.Application.Services
         public async void Register_EmptyLastname_Error()
         {
             _administratorRepositoryMock.Setup(administratorRepository => administratorRepository.Find(It.IsAny<string>()))
-                .Returns((Administrator)null);
+                .ReturnsAsync((Administrator)null);
 
             _userManagerMock.Setup(userManager => userManager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Success);
@@ -234,7 +234,7 @@ namespace Tests.Application.Services
         public async void Register_NullLastname_Error()
         {
             _administratorRepositoryMock.Setup(administratorRepository => administratorRepository.Find(It.IsAny<string>()))
-                .Returns((Administrator)null);
+                .ReturnsAsync((Administrator)null);
 
             _userManagerMock.Setup(userManager => userManager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Success);
@@ -273,7 +273,7 @@ namespace Tests.Application.Services
         public async void Register_LastnameGreaterThan100Characters_Error()
         {
             _administratorRepositoryMock.Setup(administratorRepository => administratorRepository.Find(It.IsAny<string>()))
-                .Returns((Administrator)null);
+                .ReturnsAsync((Administrator)null);
 
             _userManagerMock.Setup(userManager => userManager.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Success);

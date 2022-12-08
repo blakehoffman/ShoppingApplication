@@ -3,7 +3,6 @@ using Infrastructure.Records;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using System.Reflection.Emit;
 
 namespace Infrastructure.Contexts
 {
@@ -14,6 +13,7 @@ namespace Infrastructure.Contexts
 
         }
 
+        public DbSet<Administrator> Administrators { get; set; }
         public DbSet<Discount> Discounts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)

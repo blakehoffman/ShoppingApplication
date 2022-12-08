@@ -4,6 +4,7 @@ using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Application.Controllers
 {
@@ -20,16 +21,16 @@ namespace Application.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<AdministratorDTO>> GetAllAdministrators()
+        public async Task<ActionResult<List<AdministratorDTO>>> GetAllAdministrators()
         {
-            return _adminService.GetAdministrators();
+            return await _adminService.GetAdministrators();
         }
 
 
         [HttpPost]
-        public ActionResult<ResultDTO> Create(CreateAdministratorDTO createAdministratorDTO)
+        public async Task<ActionResult<ResultDTO>> Create(CreateAdministratorDTO createAdministratorDTO)
         {
-            var result = _adminService.CreateAdministrator(createAdministratorDTO);
+            var result = await _adminService.CreateAdministrator(createAdministratorDTO);
             return result;
         }
     }

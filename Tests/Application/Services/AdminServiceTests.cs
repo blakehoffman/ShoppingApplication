@@ -6,10 +6,6 @@ using Domain.Models.Administrator;
 using Domain.Repositories;
 using KellermanSoftware.CompareNetObjects;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -27,17 +23,17 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateAdministrator()
+        public async Task CreateAdministrator()
         {
             _administratorRepositoryMock.Setup(administratorRepository => administratorRepository.Find(It.IsAny<string>()))
-                .Returns((Administrator)null);
+                .ReturnsAsync((Administrator)null);
 
             var adminService = new AdminService(_administratorRepositoryMock.Object, _mapperMock.Object);
             var createAdministratorDTO = new CreateAdministratorDTO { Email = "test@gmail.com" };
 
             var expected = new ResultDTO { Succeeded = true };
 
-            var actual = adminService.CreateAdministrator(createAdministratorDTO);
+            var actual = await adminService.CreateAdministrator(createAdministratorDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -45,10 +41,10 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateAdministrator_DuplicateEmail_Error()
+        public async Task CreateAdministrator_DuplicateEmail_Error()
         {
             _administratorRepositoryMock.Setup(administratorRepository => administratorRepository.Find(It.IsAny<string>()))
-                .Returns(new Administrator("test@gmail.com"));
+                .ReturnsAsync(new Administrator("test@gmail.com"));
 
             var adminService = new AdminService(_administratorRepositoryMock.Object, _mapperMock.Object);
             var createAdministratorDTO = new CreateAdministratorDTO { Email = "test@gmail.com" };
@@ -59,7 +55,7 @@ namespace Tests.Application.Services
                 Errors = { "Admin already exists for this email" }
             };
 
-            var actual = adminService.CreateAdministrator(createAdministratorDTO);
+            var actual = await adminService.CreateAdministrator(createAdministratorDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -67,10 +63,10 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateAdministrator_EmailGreaterThan100Characters_Error()
+        public async Task CreateAdministrator_EmailGreaterThan100Characters_Error()
         {
             _administratorRepositoryMock.Setup(administratorRepository => administratorRepository.Find(It.IsAny<string>()))
-                .Returns((Administrator)null);
+                .ReturnsAsync((Administrator)null);
 
             var adminService = new AdminService(_administratorRepositoryMock.Object, _mapperMock.Object);
             var createAdministratorDTO = new CreateAdministratorDTO { Email = new string('a', 101) };
@@ -81,7 +77,7 @@ namespace Tests.Application.Services
                 Errors = { "Email cannot be empty and cannot be greater than 100 characters" }
             };
 
-            var actual = adminService.CreateAdministrator(createAdministratorDTO);
+            var actual = await adminService.CreateAdministrator(createAdministratorDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -89,10 +85,10 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateAdministrator_EmptyEmail_Error()
+        public async Task CreateAdministrator_EmptyEmail_Error()
         {
             _administratorRepositoryMock.Setup(administratorRepository => administratorRepository.Find(It.IsAny<string>()))
-                .Returns((Administrator)null);
+                .ReturnsAsync((Administrator)null);
 
             var adminService = new AdminService(_administratorRepositoryMock.Object, _mapperMock.Object);
             var createAdministratorDTO = new CreateAdministratorDTO { Email = "" };
@@ -102,7 +98,7 @@ namespace Tests.Application.Services
                 Errors = { "Email cannot be empty and cannot be greater than 100 characters" }
             };
 
-            var actual = adminService.CreateAdministrator(createAdministratorDTO);
+            var actual = await adminService.CreateAdministrator(createAdministratorDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -110,10 +106,10 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateAdministrator_NullEmail_Error()
+        public async Task CreateAdministrator_NullEmail_Error()
         {
             _administratorRepositoryMock.Setup(administratorRepository => administratorRepository.Find(It.IsAny<string>()))
-                .Returns((Administrator)null);
+                .ReturnsAsync((Administrator)null);
 
             var adminService = new AdminService(_administratorRepositoryMock.Object, _mapperMock.Object);
             var createAdministratorDTO = new CreateAdministratorDTO { Email = null };
@@ -124,7 +120,7 @@ namespace Tests.Application.Services
                 Errors = { "Email cannot be empty and cannot be greater than 100 characters" }
             };
 
-            var actual = adminService.CreateAdministrator(createAdministratorDTO);
+            var actual = await adminService.CreateAdministrator(createAdministratorDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);

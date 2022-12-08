@@ -4,9 +4,7 @@ using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.Models.Administrator;
 using Domain.Repositories;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Application.Services
@@ -24,7 +22,7 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public ResultDTO CreateAdministrator(CreateAdministratorDTO createAdministratorDTO)
+        public async Task<ResultDTO> CreateAdministrator(CreateAdministratorDTO createAdministratorDTO)
         {
             var resultDTO = new ResultDTO();
 
@@ -33,7 +31,7 @@ namespace Application.Services
                 resultDTO.Errors.Add("Email cannot be empty and cannot be greater than 100 characters");
             }
 
-            if (_administratorRepository.Find(createAdministratorDTO.Email) != null)
+            if (await _administratorRepository.Find(createAdministratorDTO.Email) != null)
             {
                 resultDTO.Errors.Add("Admin already exists for this email");
             }
@@ -45,15 +43,15 @@ namespace Application.Services
             }
 
             var administrator = new Administrator(createAdministratorDTO.Email);
-            _administratorRepository.Add(administrator);
+            await _administratorRepository.Add(administrator);
             resultDTO.Succeeded = true;
 
             return resultDTO;
         }
 
-        public List<AdministratorDTO> GetAdministrators()
+        public async Task<List<AdministratorDTO>> GetAdministrators()
         {
-            var administrators = _administratorRepository.GetAll();
+            var administrators = await _administratorRepository.GetAll();
             return _mapper.Map<List<AdministratorDTO>>(administrators);
         }
     }

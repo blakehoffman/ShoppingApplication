@@ -1,29 +1,28 @@
 ﻿using Domain.Models.Administrator;
-using Infrastructure.Records;
+using EntityModels = Infrastructure.Models;
 
 namespace Infrastructure.Mappings
 {
     public static class AdministratorMapper
     {
-
-        public static Administrator MapToAdministrator(AdministratorRecord administratorRecord)
+        public static Administrator MapToAdministrator(EntityModels.Administrator administratorEntity)
         {
-            if (administratorRecord == null)
+            if (administratorEntity == null)
             {
                 return null;
             }
 
-            return new Administrator(administratorRecord.Email);
+            return new Administrator(administratorEntity.Email);
         }
 
-        public static AdministratorRecord MapToAdministratorRecord(Administrator administrator)
+        public static EntityModels.Administrator MapToAdministratorEntity(Administrator administrator)
         {
             if (administrator == null)
             {
                 return null;
             }
 
-            return new AdministratorRecord
+            return new EntityModels.Administrator
             {
                 Email = administrator.Email
             };

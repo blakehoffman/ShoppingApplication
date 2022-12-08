@@ -1,67 +1,52 @@
-﻿using Dapper;
-using Domain.Models.Administrator;
+﻿using Domain.Models.Administrator;
 using Domain.Repositories;
 using Domain.UnitOfWork;
+using Infrastructure.Contexts;
 using Infrastructure.Mappings;
-using Infrastructure.Records;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
     public class AdministratorRepository : IAdministratorRepository
     {
+        private readonly ApplicationDbContext _applicationDbContext;
         private readonly IUnitOfWork _unitOfWork;
 
-        public AdministratorRepository(IUnitOfWork unitOfWork)
+        public AdministratorRepository(ApplicationDbContext applicationDbContext, IUnitOfWork unitOfWork)
         {
+            _applicationDbContext = applicationDbContext;
             _unitOfWork = unitOfWork;
         }
 
-        public void Add(Administrator administrator)
+        public async Task Add(Administrator administrator)
         {
-            var storedProc = "InsertAdministrator";
-            var administratorRecord = AdministratorMapper.MapToAdministratorRecord(administrator);
-
-            _unitOfWork.Connection.Execute(
-                storedProc,
-                administratorRecord,
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure);
+            var administratorEntity = AdministratorMapper.MapToAdministratorEntity(administrator);
+            _applicationDbContext.Administrators.Add(administratorEntity);
+            await _applicationDbContext.SaveChangesAsync();
         }
 
-        public Administrator Find(string email)
+        public async Task<Administrator> Find(string email)
         {
-            var storedProc = "FindAdministrator";
-            AdministratorRecord adminstratorRecord;
+            var administratorEntity = await _applicationDbContext.Administrators
+                .AsNoTracking()
+                .FirstOrDefaultAsync(administrator => administrator.Email == email);
 
-            adminstratorRecord = _unitOfWork.Connection.Query<AdministratorRecord>(
-                storedProc,
-                new { email },
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)
-                .FirstOrDefault();
-
-            return AdministratorMapper.MapToAdministrator(adminstratorRecord);
+            return AdministratorMapper.MapToAdministrator(administratorEntity);
         }
 
-        public List<Administrator> GetAll()
+        public async Task<List<Administrator>> GetAll()
         {
-            var storedProc = "GetAdministrators";
-            List<AdministratorRecord> administratorRecords;
-
-            administratorRecords = _unitOfWork.Connection.Query<AdministratorRecord>(
-                storedProc,
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)
-                .ToList();
+            var administratorEntities = await _applicationDbContext.Administrators
+                .AsNoTracking()
+                .ToListAsync();
 
             var administrators = new List<Administrator>();
 
-            foreach (var administratorRecord in administratorRecords)
+            foreach (var administratorEntity in administratorEntities)
             {
-                administrators.Add(new Administrator(administratorRecord.Email));
+                administrators.Add(AdministratorMapper.MapToAdministrator(administratorEntity));
             }
 
             return administrators;
