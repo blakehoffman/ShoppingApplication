@@ -98,7 +98,7 @@ namespace Application.Services
             {
                 _unitOfWork.Begin();
 
-                _orderRepository.Add(order);
+                await _orderRepository.Add(order);
                 var cart = _cartRepository.FindByUserId(userID);
 
                 if (cart != null)
@@ -107,27 +107,27 @@ namespace Application.Services
                     _cartRepository.Update(cart);
                 }
 
-                _unitOfWork.Commit();
+                //_unitOfWork.Commit();
                 resultDTO.Succeeded = true;
             }
             catch (Exception ex)
             {
-                _unitOfWork.Rollback();
+                //_unitOfWork.Rollback();
                 resultDTO.Succeeded = false;
             }
 
             return resultDTO;
         }
 
-        public List<OrderDTO> GetOrders()
+        public async Task<List<OrderDTO>> GetOrders()
         {
-            var orders = _orderRepository.GetAll();
+            var orders = await _orderRepository.GetAll();
             return _mapper.Map<List<OrderDTO>>(orders);
         }
 
-        public List<OrderDTO> GetOrders(string userID)
+        public async Task<List<OrderDTO>> GetOrders(string userID)
         {
-            var orders = _orderRepository.GetUsersOrders(userID);
+            var orders = await _orderRepository.GetUsersOrders(userID);
             return _mapper.Map<List<OrderDTO>>(orders);
         }
     }

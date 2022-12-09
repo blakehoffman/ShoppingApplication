@@ -8,7 +8,7 @@ namespace Application.Services.Interfaces
     public interface IOrderService
     {
         public Task<ResultDTO> CreateOrder(string userID, CreateOrderDTO createOrderDTO);
-        public List<OrderDTO> GetOrders();
-        public List<OrderDTO> GetOrders(string userID);
+        public Task<List<OrderDTO>> GetOrders();
+        public Task<List<OrderDTO>> GetOrders(string userID);
     }
 }

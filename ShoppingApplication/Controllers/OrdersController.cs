@@ -23,18 +23,18 @@ namespace Application.Controllers
 
         [HttpGet]
         [Authorize(Policy = "Admin")]
-        public List<OrderDTO> GetOrders()
+        public async Task<List<OrderDTO>> GetOrders()
         {
-            return _orderService.GetOrders();
+            return await _orderService.GetOrders();
         }
 
         [HttpGet("me")]
-        public List<OrderDTO> GetOrdersByUser()
+        public async Task<List<OrderDTO>> GetOrdersByUser()
         {
             var user = this.User.Identity as ClaimsIdentity;
             var userId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            return _orderService.GetOrders(userId);
+            return await _orderService.GetOrders(userId);
         }
 
         [HttpPost]

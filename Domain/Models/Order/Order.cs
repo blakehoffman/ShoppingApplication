@@ -79,7 +79,7 @@ namespace Domain.Models.Order
 
             if (_discount != null)
             {
-                return (decimal)productTotal * _discount.Amount;
+                return (decimal)productTotal - _discount.Amount;
             }
 
             return productTotal;

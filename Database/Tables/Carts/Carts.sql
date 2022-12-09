@@ -3,7 +3,7 @@
 	Id              uniqueidentifier    NOT NULL,
 	ClusterId       int                 NOT NULL IDENTITY UNIQUE,
 	UserId          uniqueidentifier    NOT NULL,
-	DateCreated     datetime2           NOT NULL,
+	DateCreated     datetimeoffset      NOT NULL,
 	Purchased       bit                 NOT NULL DEFAULT 0,
 	SysStartTime    datetime2           GENERATED ALWAYS AS ROW START NOT NULL,
 	SysEndTime      datetime2           GENERATED ALWAYS AS ROW END NOT NULL,

@@ -5,7 +5,7 @@
 	[Name]          varchar(100)        NOT NULL,
 	[Description]   varchar(300)        NOT NULL,
 	CategoryId      uniqueidentifier    NOT NULL,
-	Price           int                 NOT NULL,
+	Price           decimal(10, 2)      NOT NULL,
 	SysStartTime    datetime2           GENERATED ALWAYS AS ROW START NOT NULL,
 	SysEndTime      datetime2           GENERATED ALWAYS AS ROW END   NOT NULL,
 	PERIOD FOR SYSTEM_TIME (SysStartTime, SysEndTime),

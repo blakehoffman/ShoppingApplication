@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.EntityConfiguration
 {
-    public class DiscountConfig : IEntityTypeConfiguration<Discount>
+    public class CategoryConfiguration : IEntityTypeConfiguration<Category>
     {
-        public void Configure(EntityTypeBuilder<Discount> builder)
+        public void Configure(EntityTypeBuilder<Category> builder)
         {
             
         }

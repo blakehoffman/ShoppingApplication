@@ -1,14 +1,15 @@
 ﻿using Domain.Models.Order;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Domain.Repositories
 {
     public interface IOrderRepository
     {
-        public void Add(Order order);
-        public Order Find(Guid id);
-        public List<Order> GetAll();
-        public List<Order> GetUsersOrders(string userID);
+        public Task Add(Order order);
+        public Task<Order> Find(Guid id);
+        public Task<List<Order>> GetAll();
+        public Task<List<Order>> GetUsersOrders(string userID);
     }
 }

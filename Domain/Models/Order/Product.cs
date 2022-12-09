@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Models.Order
 {
     public class Product
     {
-        public Product(Guid id, string name, int price, int quantity)
+        public Product(Guid id, string name, decimal price, int quantity)
         {
             Id = id;
             Name = name;
@@ -18,7 +14,7 @@ namespace Domain.Models.Order
 
         public Guid Id { get; }
         public string Name { get; }
-        public int Price { get; }
+        public decimal Price { get; }
         public int Quantity { get; set; }
     }
 }

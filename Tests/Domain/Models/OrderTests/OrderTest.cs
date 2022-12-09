@@ -72,11 +72,11 @@ namespace Tests.Domain.Models.OrderTests
         {
             var product = new Product(Guid.NewGuid(), "test name", 10, 1);
             var productTwo = new Product(Guid.NewGuid(), "test name", 10, 1);
-            var order = new Order(Guid.NewGuid(), "user", DateTimeOffset.UtcNow, new Discount(Guid.NewGuid(), 0.25m));
+            var order = new Order(Guid.NewGuid(), "user", DateTimeOffset.UtcNow, new Discount(Guid.NewGuid(), 2));
             order.AddItem(product);
             order.AddItem(productTwo);
 
-            var expected = 5;
+            var expected = 18;
 
             var actual = order.GetTotal();
 

@@ -3,7 +3,7 @@
 	Id                      uniqueidentifier    NOT NULL,
 	ClusterId               int                 NOT NULL IDENTITY UNIQUE,
 	UserId                  uniqueidentifier    NOT NULL,
-	OrderDate               datetime2           NOT NULL,
+	OrderDate               datetimeoffset      NOT NULL,
 	DiscountId              uniqueidentifier    NULL,
 	SysStartTime            datetime2           GENERATED ALWAYS AS ROW START NOT NULL,
 	SysEndTime              datetime2           GENERATED ALWAYS AS ROW END   NOT NULL,

@@ -1,237 +1,89 @@
-﻿using Dapper;
-using Domain.Models.Order;
+﻿using Domain.Models.Order;
 using Domain.Repositories;
 using Domain.UnitOfWork;
+using Infrastructure.Contexts;
 using Infrastructure.Mappings;
-using Infrastructure.Records;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
     public class OrderRepository : IOrderRepository
     {
+        private readonly ApplicationDbContext _applicationDbContext;
         private readonly IUnitOfWork _unitOfWork;
 
-        public OrderRepository(IUnitOfWork unitOfWork)
+        public OrderRepository(ApplicationDbContext applicationDbContext, IUnitOfWork unitOfWork)
         {
+            _applicationDbContext = applicationDbContext;
             _unitOfWork = unitOfWork;
         }
 
-        public void Add(Order order)
+        public async Task Add(Order order)
         {
-            var storedProc = "InsertOrder";
-            var orderRecord = OrderMapper.MapToOrderRecord(order);
-
-            _unitOfWork.Connection.Execute(
-                storedProc,
-                orderRecord,
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure);
-
-            storedProc = "InsertOrderProduct";
+            var orderEntity = OrderMapper.MapToOrderEntity(order);
+            orderEntity.Products = new();
 
             foreach (var orderProduct in order.Products)
             {
-                var orderProductRecord = OrderMapper.MapProductToOrderProductRecord(orderProduct, order.Id);
-
-                _unitOfWork.Connection.Execute(
-                    storedProc,
-                    orderProductRecord,
-                    _unitOfWork.Transaction,
-                    commandType: CommandType.StoredProcedure);
+                var orderProductEntity = OrderMapper.MapProductToOrderProductEntity(orderProduct, order.Id);
+                orderEntity.Products.Add(orderProductEntity);
             }
+
+            _applicationDbContext.Orders.Add(orderEntity);
+            await _applicationDbContext.SaveChangesAsync();
         }
 
-        public Order Find(Guid id)
+        public async Task<Order> Find(Guid id)
         {
-            var storedProc = "GetOrder";
-            OrderRecord orderRecord;
+            var orderEntity = await _applicationDbContext.Orders
+                .Include(order => order.Products)
+                .ThenInclude(orderProduct => orderProduct.Product)
+                .Include(order => order.Discount)
+                .AsNoTracking()
+                .SingleOrDefaultAsync(order => order.Id == id);
 
-            orderRecord = _unitOfWork.Connection.Query<OrderRecord>(
-                storedProc,
-                new { id },
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)
-                .FirstOrDefault();
-
-            if (orderRecord == null)
-            {
-                return null;
-            }
-
-            List<OrderProductRecord> orderProductRecords;
-            storedProc = "GetOrderProducts";
-
-            orderProductRecords = _unitOfWork.Connection.Query<OrderProductRecord>(
-                storedProc,
-                new { id },
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)
-                .ToList();
-
-            storedProc = "GetProduct";
-            var products = new List<Product>(); ;
-
-            if (orderProductRecords != null)
-            {
-                foreach (var orderProductRecord in orderProductRecords)
-                {
-                    ProductRecord productRecord;
-
-                    productRecord = _unitOfWork.Connection.Query<ProductRecord>(
-                        storedProc,
-                        new { Id = orderProductRecord.ProductId },
-                        _unitOfWork.Transaction,
-                        commandType: CommandType.StoredProcedure)
-                        .FirstOrDefault();
-
-                    products.Add(OrderMapper.MapOrderProductRecordToProduct(orderProductRecord, productRecord));
-                }
-            }
-
-            DiscountRecord discountRecord = null;
-            storedProc = "GetDiscount";
-
-            discountRecord = _unitOfWork.Connection.Query<DiscountRecord>(
-                storedProc,
-                new { Id = orderRecord.DiscountId },
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)
-                .FirstOrDefault();
-
-            Discount discount = OrderMapper.MapDiscountRecordToDiscount(discountRecord);
-            var order = OrderMapper.MapOrderRecordToOrder(orderRecord, products, discount);
-
-            return order;
+            return OrderMapper.MapOrderEntityToOrder(orderEntity);
         }
 
-        public List<Order> GetAll()
+        public async Task<List<Order>> GetAll()
         {
-            var storedProc = "GetOrders";
-            List<OrderRecord> orderRecords;
+            var orderEntities = await _applicationDbContext.Orders
+                .Include(order => order.Products)
+                .ThenInclude(orderProduct => orderProduct.Product)
+                .Include(order => order.Discount)
+                .AsNoTracking()
+                .ToListAsync();
 
-            orderRecords = _unitOfWork.Connection.Query<OrderRecord>(
-                storedProc,
-                transaction: _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)
-                .ToList();
-
-            storedProc = "GetOrderProduct";
             var orders = new List<Order>();
 
-            foreach (var orderRecord in orderRecords)
+            foreach (var orderEntity in orderEntities)
             {
-                List<OrderProductRecord> orderProductRecords;
-                storedProc = "GetOrderProducts";
-
-                orderProductRecords = _unitOfWork.Connection.Query<OrderProductRecord>(
-                    storedProc,
-                    new { orderRecord.Id },
-                    _unitOfWork.Transaction,
-                    commandType: CommandType.StoredProcedure)
-                    .ToList();
-
-                storedProc = "GetProduct";
-                var products = new List<Product>(); ;
-
-                if (orderProductRecords != null)
-                {
-                    foreach (var orderProductRecord in orderProductRecords)
-                    {
-                        ProductRecord productRecord;
-
-                        productRecord = _unitOfWork.Connection.Query<ProductRecord>(
-                            storedProc,
-                            new { Id = orderProductRecord.ProductId },
-                            _unitOfWork.Transaction,
-                            commandType: CommandType.StoredProcedure)
-                            .FirstOrDefault();
-
-                        products.Add(OrderMapper.MapOrderProductRecordToProduct(orderProductRecord, productRecord));
-                    }
-                }
-
-                DiscountRecord discountRecord = null;
-                storedProc = "GetDiscount";
-
-                discountRecord = _unitOfWork.Connection.Query<DiscountRecord>(
-                    storedProc,
-                    new { Id = orderRecord.DiscountId },
-                    _unitOfWork.Transaction,
-                    commandType: CommandType.StoredProcedure)
-                    .FirstOrDefault();
-
-                Discount discount = OrderMapper.MapDiscountRecordToDiscount(discountRecord);
-                var order = OrderMapper.MapOrderRecordToOrder(orderRecord, products, discount);
-                orders.Add(order);
+                orders.Add(OrderMapper.MapOrderEntityToOrder(orderEntity));
             }
 
             return orders;
         }
 
-        public List<Order> GetUsersOrders(string userID)
+        public async Task<List<Order>> GetUsersOrders(string userID)
         {
-            var storedProc = "GetOrdersByUserID";
-            List<OrderRecord> orderRecords;
+            var orderEntities = await _applicationDbContext.Orders
+                .Include(order => order.Products)
+                .ThenInclude(orderProduct => orderProduct.Product)
+                .Include(order => order.Discount)
+                .Where(order => order.UserId == new Guid(userID))
+                .AsNoTracking()
+                .ToListAsync();
 
-            orderRecords = _unitOfWork.Connection.Query<OrderRecord>(
-                storedProc,
-                new { userID },
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)
-                .ToList();
-
-            storedProc = "GetOrderProduct";
             var orders = new List<Order>();
 
-            foreach (var orderRecord in orderRecords)
+            foreach (var orderEntity in orderEntities)
             {
-                List<OrderProductRecord> orderProductRecords;
-                storedProc = "GetOrderProducts";
-
-                orderProductRecords = _unitOfWork.Connection.Query<OrderProductRecord>(
-                    storedProc,
-                    new { orderRecord.Id },
-                    _unitOfWork.Transaction,
-                    commandType: CommandType.StoredProcedure)
-                    .ToList();
-
-                storedProc = "GetProduct";
-                var products = new List<Product>(); ;
-
-                if (orderProductRecords != null)
-                {
-                    foreach (var orderProductRecord in orderProductRecords)
-                    {
-                        ProductRecord productRecord;
-
-                        productRecord = _unitOfWork.Connection.Query<ProductRecord>(
-                            storedProc,
-                            new { Id = orderProductRecord.ProductId },
-                            _unitOfWork.Transaction,
-                            commandType: CommandType.StoredProcedure)
-                            .FirstOrDefault();
-
-                        products.Add(OrderMapper.MapOrderProductRecordToProduct(orderProductRecord, productRecord));
-                    }
-                }
-
-                DiscountRecord discountRecord = null;
-                storedProc = "GetDiscount";
-
-                discountRecord = _unitOfWork.Connection.Query<DiscountRecord>(
-                    storedProc,
-                    new { Id = orderRecord.DiscountId },
-                    _unitOfWork.Transaction,
-                    commandType: CommandType.StoredProcedure)
-                    .FirstOrDefault();
-
-                Discount discount = OrderMapper.MapDiscountRecordToDiscount(discountRecord);
-                var order = OrderMapper.MapOrderRecordToOrder(orderRecord, products, discount);
-                orders.Add(order);
+                orders.Add(OrderMapper.MapOrderEntityToOrder(orderEntity));
             }
 
             return orders;

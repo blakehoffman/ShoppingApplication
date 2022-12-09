@@ -1,57 +1,64 @@
 ﻿using Domain.Models.Order;
-using Infrastructure.Records;
 using System;
 using System.Collections.Generic;
+using EntityModels = Infrastructure.Models;
 
 namespace Infrastructure.Mappings
 {
     public static class OrderMapper
     {
 
-        public static Discount MapDiscountRecordToDiscount(DiscountRecord discountRecord)
+        public static Discount MapDiscountEntityToDiscount(EntityModels.Discount discountEntity)
         {
-            if (discountRecord == null)
+            if (discountEntity == null)
             {
                 return null;
             }
 
-            return new Discount(discountRecord.Id, discountRecord.Amount);
+            return new Discount(discountEntity.Id, discountEntity.Amount);
         }
 
-        public static Product MapOrderProductRecordToProduct(OrderProductRecord orderProductRecord, ProductRecord productRecord)
+        public static Product MapOrderProductEntityToProduct(EntityModels.OrderProduct orderProductEntity)
         {
-            if (orderProductRecord == null)
+            return new Product(
+                orderProductEntity.Product.Id,
+                orderProductEntity.Product.Name,
+                orderProductEntity.Product.Price,
+                orderProductEntity.Quantity);
+        }
+
+        public static Order MapOrderEntityToOrder(EntityModels.Order order)
+        {
+            if (order == null)
             {
                 return null;
             }
 
-            return new Product(orderProductRecord.ProductId, productRecord.Name, productRecord.Price, orderProductRecord.Quantity);
+            var discount = MapDiscountEntityToDiscount(order.Discount);
+            var orderProducts = new List<Product>();
+
+            foreach (var orderProduct in order.Products)
+            {
+                orderProducts.Add(MapOrderProductEntityToProduct(orderProduct));
+            }
+
+            return new Order(
+                order.Id,
+                order.UserId.ToString(),
+                order.OrderDate,
+                discount,
+                orderProducts
+            );
         }
 
-        public static Order MapOrderRecordToOrder(OrderRecord orderRecord, List<Product> orderProducts, Discount discount)
-        {
-            if (orderRecord != null && orderProducts == null)
-            {
-                return new Order(orderRecord.Id, orderRecord.UserId.ToString(), orderRecord.OrderDate, discount);
-            }
-            else if (orderRecord != null && orderProducts != null)
-            {
-                return new Order(orderRecord.Id, orderRecord.UserId.ToString(), orderRecord.OrderDate, discount, orderProducts);
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public static OrderProductRecord MapProductToOrderProductRecord(Product product, Guid orderId)
+        public static EntityModels.OrderProduct MapProductToOrderProductEntity(Product product, Guid orderId)
         {
             if (product == null)
             {
                 return null;
             }
 
-            return new OrderProductRecord
+            return new EntityModels.OrderProduct
             {
                 OrderId = orderId,
                 ProductId = product.Id,
@@ -59,14 +66,14 @@ namespace Infrastructure.Mappings
             };
         }
 
-        public static OrderRecord MapToOrderRecord(Order order)
+        public static EntityModels.Order MapToOrderEntity(Order order)
         {
             if (order == null)
             {
                 return null;
             }
 
-            return new OrderRecord
+            return new EntityModels.Order
             {
                 Id = order.Id,
                 UserId = new Guid(order.UserId),

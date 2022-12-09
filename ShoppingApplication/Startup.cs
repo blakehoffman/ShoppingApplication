@@ -121,7 +121,7 @@ namespace Application
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), x => x.UseHierarchyId());
             });
 
             services.AddSwaggerGen(swagger =>
