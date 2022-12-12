@@ -4,7 +4,7 @@ namespace Domain.Models.Cart
 {
     public class Product
     {
-        public Product(Guid id, string name, int price, int quantity)
+        public Product(Guid id, string name, decimal price, int quantity)
         {
             if (id == Guid.Empty)
             {
@@ -24,7 +24,7 @@ namespace Domain.Models.Cart
 
         public Guid Id { get; }
         public string Name { get; }
-        public int Price { get; }
+        public decimal Price { get; }
         public int Quantity { get; private set; }
 
         public void UpdateQuantity(int quantity)

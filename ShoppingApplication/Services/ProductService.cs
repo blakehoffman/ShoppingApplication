@@ -6,6 +6,7 @@ using Domain.Models.Product;
 using Domain.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -20,7 +21,7 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public ResultDTO CreateProduct(CreateProductDTO createProductDTO)
+        public async Task<ResultDTO> CreateProduct(CreateProductDTO createProductDTO)
         {
             var resultDTO = new ResultDTO();
 
@@ -48,7 +49,7 @@ namespace Application.Services
                 resultDTO.Errors.Add("Product price must be above 0");
             }
 
-            if (_productRepository.FindByName(createProductDTO.Name) != null)
+            if (await _productRepository.FindByName(createProductDTO.Name) != null)
             {
                 resultDTO.Errors.Add("A product with this name already exists");
             }
@@ -65,27 +66,27 @@ namespace Application.Services
                 createProductDTO.CategoryId,
                 createProductDTO.Price);
 
-            _productRepository.Add(product);
+            await _productRepository.Add(product);
             resultDTO.Succeeded = true;
 
             return resultDTO;
         }
 
-        public ProductDTO GetProduct(Guid id)
+        public async Task<ProductDTO> GetProduct(Guid id)
         {
-            var product = _productRepository.Find(id);
+            var product = await _productRepository.Find(id);
             return _mapper.Map<ProductDTO>(product);
         }
 
-        public List<ProductDTO> GetProducts()
+        public async Task<List<ProductDTO>> GetProducts()
         {
-            var products = _productRepository.GetAll();
+            var products = await _productRepository.GetAll();
             return _mapper.Map<List<ProductDTO>>(products);
         }
 
-        public List<ProductDTO> GetProductsByCategory(Guid categoryId)
+        public async Task<List<ProductDTO>> GetProductsByCategory(Guid categoryId)
         {
-            var products = _productRepository.GetByCategory(categoryId);
+            var products = await _productRepository.GetByCategory(categoryId);
             return _mapper.Map<List<ProductDTO>>(products);
         }
     }

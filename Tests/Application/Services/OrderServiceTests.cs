@@ -42,7 +42,7 @@ namespace Tests.Application.Services
                 .ReturnsAsync(new DiscountModel(Guid.NewGuid(), "test", 0.25m));
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
-                .Returns(new ProductModel(Guid.NewGuid(), "test", "description", Guid.NewGuid(), 25));
+                .ReturnsAsync(new ProductModel(Guid.NewGuid(), "test", "description", Guid.NewGuid(), 25));
 
             _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
                 .Returns((Cart)null);
@@ -82,7 +82,7 @@ namespace Tests.Application.Services
                 .ReturnsAsync(new DiscountModel(Guid.NewGuid(), "test", 0.25m));
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
-                .Returns((ProductModel)null);
+                .ReturnsAsync((ProductModel)null);
 
             var orderService = new OrderService(
                 _cartRepositoryMock.Object,
@@ -120,7 +120,7 @@ namespace Tests.Application.Services
                 .ReturnsAsync((DiscountModel)null);
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
-                .Returns(new ProductModel(Guid.NewGuid(), "test", "description", Guid.NewGuid(), 25));
+                .ReturnsAsync(new ProductModel(Guid.NewGuid(), "test", "description", Guid.NewGuid(), 25));
 
             var orderService = new OrderService(
                 _cartRepositoryMock.Object,
@@ -157,7 +157,7 @@ namespace Tests.Application.Services
         {
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
-                .Returns(new ProductModel(Guid.NewGuid(), "test", "description", Guid.NewGuid(), 25));
+                .ReturnsAsync(new ProductModel(Guid.NewGuid(), "test", "description", Guid.NewGuid(), 25));
 
             var orderService = new OrderService(
                 _cartRepositoryMock.Object,

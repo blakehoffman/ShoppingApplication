@@ -37,7 +37,7 @@ namespace Tests.Application.Services
                 .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
-                .Returns(new ProductModel(productID, "test product", "description", Guid.NewGuid(), 3));
+                .ReturnsAsync(new ProductModel(productID, "test product", "description", Guid.NewGuid(), 3));
 
             var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
@@ -85,7 +85,7 @@ namespace Tests.Application.Services
                 .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
-                .Returns(new ProductModel(productID, "test product", "description", Guid.NewGuid(), 3));
+                .ReturnsAsync(new ProductModel(productID, "test product", "description", Guid.NewGuid(), 3));
 
             var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
@@ -202,7 +202,7 @@ namespace Tests.Application.Services
                 .Returns(userCart);
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
-                .Returns(new ProductModel(productID, "test product", "description", Guid.NewGuid(), 25));
+                .ReturnsAsync(new ProductModel(productID, "test product", "description", Guid.NewGuid(), 25));
 
             var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 

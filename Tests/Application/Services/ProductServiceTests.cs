@@ -27,10 +27,10 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateProduct_DuplicateName_Error()
+        public async Task CreateProduct_DuplicateName_Error()
         {
             _productRepositoryMock.Setup(productRepository => productRepository.FindByName(It.IsAny<string>()))
-                .Returns(new Product(Guid.NewGuid(), "Test Name", "test description", Guid.NewGuid(), 5));
+                .ReturnsAsync(new Product(Guid.NewGuid(), "Test Name", "test description", Guid.NewGuid(), 5));
 
             var productService = new ProductService(_productRepositoryMock.Object, _mapperMock.Object);
 
@@ -48,7 +48,7 @@ namespace Tests.Application.Services
                 Errors = { "A product with this name already exists" }
             };
 
-            var actual = productService.CreateProduct(createProductDTO);
+            var actual = await productService.CreateProduct(createProductDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -56,7 +56,7 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateProduct_EmptyName_Error()
+        public async Task CreateProduct_EmptyName_Error()
         {
             var productService = new ProductService(_productRepositoryMock.Object, _mapperMock.Object);
 
@@ -74,7 +74,7 @@ namespace Tests.Application.Services
                 Errors = { "Product name cannot be empty and must be between 4 and 50 characters" }
             };
 
-            var actual = productService.CreateProduct(createProductDTO);
+            var actual = await productService.CreateProduct(createProductDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -82,7 +82,7 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateProduct_NameGreaterThan50Characters_Error()
+        public async Task CreateProduct_NameGreaterThan50Characters_Error()
         {
             var productService = new ProductService(_productRepositoryMock.Object, _mapperMock.Object);
 
@@ -100,7 +100,7 @@ namespace Tests.Application.Services
                 Errors = { "Product name cannot be empty and must be between 4 and 50 characters" }
             };
 
-            var actual = productService.CreateProduct(createProductDTO);
+            var actual = await productService.CreateProduct(createProductDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -108,7 +108,7 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateProduct_NameLessThan4Characters()
+        public async Task CreateProduct_NameLessThan4Characters()
         {
             var productService = new ProductService(_productRepositoryMock.Object, _mapperMock.Object);
 
@@ -126,7 +126,7 @@ namespace Tests.Application.Services
                 Errors = { "Product name cannot be empty and must be between 4 and 50 characters" }
             };
 
-            var actual = productService.CreateProduct(createProductDTO);
+            var actual = await productService.CreateProduct(createProductDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -134,7 +134,7 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateProduct_EmptyDescription_Error()
+        public async Task CreateProduct_EmptyDescription_Error()
         {
             var productService = new ProductService(_productRepositoryMock.Object, _mapperMock.Object);
 
@@ -152,7 +152,7 @@ namespace Tests.Application.Services
                 Errors = { "Product description cannot be empty and must be between 8 and 100 characters" }
             };
 
-            var actual = productService.CreateProduct(createProductDTO);
+            var actual = await productService.CreateProduct(createProductDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -160,7 +160,7 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateProduct_DescriptionLessThan8Characters_Error()
+        public async Task CreateProduct_DescriptionLessThan8Characters_Error()
         {
             var productService = new ProductService(_productRepositoryMock.Object, _mapperMock.Object);
 
@@ -178,7 +178,7 @@ namespace Tests.Application.Services
                 Errors = { "Product description cannot be empty and must be between 8 and 100 characters" }
             };
 
-            var actual = productService.CreateProduct(createProductDTO);
+            var actual = await productService.CreateProduct(createProductDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -186,7 +186,7 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateProduct_DescriptionGreaterThan100Characters_Error()
+        public async Task CreateProduct_DescriptionGreaterThan100Characters_Error()
         {
             var productService = new ProductService(_productRepositoryMock.Object, _mapperMock.Object);
 
@@ -204,7 +204,7 @@ namespace Tests.Application.Services
                 Errors = { "Product description cannot be empty and must be between 8 and 100 characters" }
             };
 
-            var actual = productService.CreateProduct(createProductDTO);
+            var actual = await productService.CreateProduct(createProductDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -212,7 +212,7 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateProduct_EmptyProductId_Error()
+        public async Task CreateProduct_EmptyProductId_Error()
         {
             var productService = new ProductService(_productRepositoryMock.Object, _mapperMock.Object);
 
@@ -230,7 +230,7 @@ namespace Tests.Application.Services
                 Errors = { "Product category id cannot be empty" }
             };
 
-            var actual = productService.CreateProduct(createProductDTO);
+            var actual = await productService.CreateProduct(createProductDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -238,7 +238,7 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateProduct_PriceIsZero_Error()
+        public async Task CreateProduct_PriceIsZero_Error()
         {
             var productService = new ProductService(_productRepositoryMock.Object, _mapperMock.Object);
 
@@ -256,7 +256,7 @@ namespace Tests.Application.Services
                 Errors = { "Product price must be above 0" }
             };
 
-            var actual = productService.CreateProduct(createProductDTO);
+            var actual = await productService.CreateProduct(createProductDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);

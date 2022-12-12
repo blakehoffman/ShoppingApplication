@@ -6,6 +6,7 @@ using Domain.Models.Cart;
 using Domain.Repositories;
 using Domain.UnitOfWork;
 using System;
+using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -28,7 +29,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public ResultDTO AddProductToCart(string userId, Guid productId, AddCartProductDTO addCartProductDTO)
+        public async Task<ResultDTO> AddProductToCart(string userId, Guid productId, AddCartProductDTO addCartProductDTO)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -46,7 +47,7 @@ namespace Application.Services
                 return null;
             }
 
-            var product = _productRepository.Find(productId);
+            var product = await _productRepository.Find(productId);
 
             if (product == null)
             {

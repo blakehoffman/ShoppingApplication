@@ -2,14 +2,15 @@
 using Application.DTO.Product;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Application.Services.Interfaces
 {
     public interface IProductService
     {
-        public ResultDTO CreateProduct(CreateProductDTO createProductDTO);
-        public ProductDTO GetProduct(Guid productId);
-        public List<ProductDTO> GetProducts();
-        public List<ProductDTO> GetProductsByCategory(Guid categoryId);
+        public Task<ResultDTO> CreateProduct(CreateProductDTO createProductDTO);
+        public Task<ProductDTO> GetProduct(Guid productId);
+        public Task<List<ProductDTO>> GetProducts();
+        public Task<List<ProductDTO>> GetProductsByCategory(Guid categoryId);
     }
 }

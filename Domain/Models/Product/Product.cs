@@ -4,7 +4,7 @@ namespace Domain.Models.Product
 {
     public class Product
     {
-        public Product(Guid id, string name, string description, Guid categoryId, int price)
+        public Product(Guid id, string name, string description, Guid categoryId, decimal price)
         {
             if (id == Guid.Empty)
             {
@@ -53,9 +53,9 @@ namespace Domain.Models.Product
         public string Description { get; private set; }
         public Guid CategoryId { get; }
 
-        public int Price { get; private set; }
+        public decimal Price { get; private set; }
 
-        public void ChangePrice(int newPrice)
+        public void ChangePrice(decimal newPrice)
         {
             if (newPrice <= 0)
             {

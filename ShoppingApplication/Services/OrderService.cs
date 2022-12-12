@@ -71,7 +71,7 @@ namespace Application.Services
 
             foreach (var product in createOrderDTO.Products)
             {
-                if (_productRepository.Find(product.Id) == null)
+                if (await _productRepository.Find(product.Id) == null)
                 {
                     resultDTO.Errors.Add($"Product {product.Id} does not exist");
                 }
@@ -88,7 +88,7 @@ namespace Application.Services
 
             foreach (var productDTO in createOrderDTO.Products)
             {
-                var product = _productRepository.Find(productDTO.Id);
+                var product = await _productRepository.Find(productDTO.Id);
                 var orderProduct = new Product(product.Id, product.Name, product.Price, productDTO.Quantity);
 
                 order.AddItem(orderProduct);

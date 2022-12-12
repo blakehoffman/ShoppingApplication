@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Application.Controllers
 {
@@ -20,9 +21,9 @@ namespace Application.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<ProductDTO> GetProduct(Guid id)
+        public async Task<ActionResult<ProductDTO>> GetProduct(Guid id)
         {
-            var product = _productService.GetProduct(id);
+            var product = await _productService.GetProduct(id);
 
             if (product == null)
             {
@@ -33,23 +34,23 @@ namespace Application.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<ProductDTO>> GetProducts(Guid? categoryId)
+        public async Task<ActionResult<List<ProductDTO>>> GetProducts(Guid? categoryId)
         {
             if (categoryId == null)
             {
-                return _productService.GetProducts();
+                return await _productService.GetProducts();
             }
             else
             {
-                return _productService.GetProductsByCategory((Guid)categoryId);
+                return await _productService.GetProductsByCategory((Guid)categoryId);
             }
         }
 
         [HttpPost]
         [Authorize(Policy = "Admin")]
-        public ActionResult<ResultDTO> CreateProduct(CreateProductDTO createProductDTO)
+        public async Task<ActionResult<ResultDTO>> CreateProduct(CreateProductDTO createProductDTO)
         {
-            var result = _productService.CreateProduct(createProductDTO);
+            var result = await _productService.CreateProduct(createProductDTO);
             return result;
         }
     }

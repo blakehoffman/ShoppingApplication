@@ -55,7 +55,7 @@ namespace Domain.Models.Cart
 
         public ImmutableList<Product> Products => _products.ToImmutableList();
 
-        public int GetTotal => _products.Sum(p => p.Price * p.Quantity);
+        public decimal GetTotal => _products.Sum(p => p.Price * p.Quantity);
 
         public void AddItem(Product product)
         {

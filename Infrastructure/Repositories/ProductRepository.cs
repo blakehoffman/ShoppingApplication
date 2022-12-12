@@ -1,107 +1,80 @@
-﻿using Dapper;
-using Domain.Models.Product;
+﻿using Domain.Models.Product;
 using Domain.Repositories;
 using Domain.UnitOfWork;
+using Infrastructure.Contexts;
 using Infrastructure.Mappings;
-using Infrastructure.Records;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
     public class ProductRepository : IProductRepository
     {
+        private readonly ApplicationDbContext _applicationDbContext;
         private readonly IUnitOfWork _unitOfWork;
 
-        public ProductRepository(IUnitOfWork unitOfWork)
+        public ProductRepository(ApplicationDbContext applicationDbContext, IUnitOfWork unitOfWork)
         {
+            _applicationDbContext = applicationDbContext;
             _unitOfWork = unitOfWork;
         }
 
-        public void Add(Product product)
+        public async Task Add(Product product)
         {
-            var storedProc = "InsertProduct";
-            var productRecord = ProductMapper.MapToProductRecord(product);
-
-            _unitOfWork.Connection.Execute(
-                storedProc,
-                productRecord,
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure);
+            var productEntity = ProductMapper.MapToProductEntity(product);
+            _applicationDbContext.Products.Add(productEntity);
+            await _applicationDbContext.SaveChangesAsync();
         }
 
-        public Product Find(Guid id)
+        public async Task<Product> Find(Guid id)
         {
-            var storedProc = "GetProduct";
-            ProductRecord productRecord;
+            var productEntity = await _applicationDbContext.Products
+                .AsNoTracking()
+                .FirstOrDefaultAsync(product => product.Id == id);
 
-            productRecord = _unitOfWork.Connection.Query<ProductRecord>(
-                storedProc,
-                new { id },
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)
-                .FirstOrDefault();
-
-            return ProductMapper.MapToProduct(productRecord);
+            return ProductMapper.MapToProduct(productEntity);
         }
 
-        public Product FindByName(string name)
+        public async Task<Product> FindByName(string name)
         {
-            var storedProc = "FindProductByName";
-            ProductRecord productRecord;
+            var productEntity = await _applicationDbContext.Products
+                .AsNoTracking()
+                .FirstOrDefaultAsync(product => product.Name == name);
 
-            productRecord = _unitOfWork.Connection.Query<ProductRecord>(
-                storedProc,
-                new { name },
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)
-                .FirstOrDefault();
-
-            return ProductMapper.MapToProduct(productRecord);
+            return ProductMapper.MapToProduct(productEntity);
         }
 
-        public List<Product> GetAll()
+        public async Task<List<Product>> GetAll()
         {
-            var storedProc = "GetProducts";
-            List<ProductRecord> productRecords;
-
-            productRecords = _unitOfWork.Connection.Query<ProductRecord>(
-                storedProc,
-                transaction: _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)
-                .ToList();
+            var productEntities = await _applicationDbContext.Products
+                .AsNoTracking()
+                .ToListAsync();
 
             var products = new List<Product>();
 
-            foreach (var productRecord in productRecords)
+            foreach (var productEntity in productEntities)
             {
-                products.Add(ProductMapper.MapToProduct(productRecord));
+                products.Add(ProductMapper.MapToProduct(productEntity));
             }
-
             return products;
         }
 
-        public List<Product> GetByCategory(Guid categoryId)
+        public async Task<List<Product>> GetByCategory(Guid categoryId)
         {
-            var storedProc = "GetProductsByCategory";
-            List<ProductRecord> productRecords;
-
-            productRecords = _unitOfWork.Connection.Query<ProductRecord>(
-                storedProc,
-                new { categoryId },
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)
-                .ToList();
+            var productEntities = await _applicationDbContext.Products
+                .Where(product => product.CategoryId == categoryId)
+                .AsNoTracking()
+                .ToListAsync();
 
             var products = new List<Product>();
 
-            foreach (var productRecord in productRecords)
+            foreach (var productEntity in productEntities)
             {
-                products.Add(ProductMapper.MapToProduct(productRecord));
+                products.Add(ProductMapper.MapToProduct(productEntity));
             }
-
             return products;
         }
     }

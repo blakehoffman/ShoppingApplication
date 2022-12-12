@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Application.Controllers
 {
@@ -36,7 +37,7 @@ namespace Application.Controllers
         }
 
         [HttpPut("{cartId}/products/{productId}")]
-        public ActionResult<ResultDTO> AddProductToCart(Guid cartId, Guid productId, [FromBody] AddCartProductDTO cartProduct)
+        public async Task<ActionResult<ResultDTO>> AddProductToCart(Guid cartId, Guid productId, [FromBody] AddCartProductDTO cartProduct)
         {
             if (cartProduct.Id != null && cartProduct.Id != productId)
             {
@@ -45,7 +46,7 @@ namespace Application.Controllers
 
             var user = this.User.Identity as ClaimsIdentity;
             var userId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var result = _cartService.AddProductToCart(userId, productId, cartProduct);
+            var result = await _cartService.AddProductToCart(userId, productId, cartProduct);
 
             if (result == null)
             {
