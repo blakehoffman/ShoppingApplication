@@ -14,6 +14,8 @@ namespace Infrastructure.Contexts
         }
 
         public DbSet<Administrator> Administrators { get; set; }
+        public DbSet<CartProduct> CartProducts { get; set; }
+        public DbSet<Cart> Carts { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Order> Orders { get; set; }

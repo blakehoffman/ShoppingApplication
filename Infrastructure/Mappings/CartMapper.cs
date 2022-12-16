@@ -2,20 +2,28 @@
 using Infrastructure.Records;
 using System;
 using System.Collections.Generic;
+using EntityModels = Infrastructure.Models;
 
 namespace Infrastructure.Mappings
 {
     public static class CartMapper
     {
-        public static Cart MapToCart(CartRecord cartRecord, List<Product> cartProducts)
+        public static Cart MapToCart(EntityModels.Cart cartEntity)
         {
-            if (cartRecord != null && cartProducts == null)
+            if (cartEntity != null && cartEntity.Products == null)
             {
-                return new Cart(cartRecord.Id, cartRecord.UserId.ToString(), cartRecord.DateCreated);
+                return new Cart(cartEntity.Id, cartEntity.UserId.ToString(), cartEntity.DateCreated);
             }
-            else if (cartRecord != null && cartProducts != null)
+            else if (cartEntity != null && cartEntity != null)
             {
-                return new Cart(cartRecord.Id, cartRecord.UserId.ToString(), cartRecord.DateCreated, cartProducts);
+                var cartProducts = new List<Product>();
+
+                foreach (var productEntity in cartEntity.Products)
+                {
+                    var cartProduct = MapToCartProduct(productEntity);
+                    cartProducts.Add(cartProduct);
+                }
+                return new Cart(cartEntity.Id, cartEntity.UserId.ToString(), cartEntity.DateCreated, cartProducts);
             }
             else
             {
@@ -23,14 +31,14 @@ namespace Infrastructure.Mappings
             }
         }
 
-        public static CartRecord MapToCartRecord(Cart cart)
+        public static EntityModels.Cart MapToCartEntity(Cart cart)
         {
             if (cart == null)
             {
                 return null;
             }
 
-            return new CartRecord
+            return new EntityModels.Cart
             {
                 Id = cart.Id,
                 UserId = new Guid(cart.UserId),
@@ -39,25 +47,25 @@ namespace Infrastructure.Mappings
             };
         }
 
-        public static Product MapToCartProduct(CartProductRecord cartProductRecord, ProductRecord productRecord)
+        public static Product MapToCartProduct(EntityModels.CartProduct cartProductEntity)
         {
-            if (cartProductRecord == null || productRecord == null)
+            if (cartProductEntity == null)
             {
                 return null;
             }
 
-            var product = new Product(productRecord.Id, productRecord.Name, productRecord.Price, cartProductRecord.Quantity);
+            var product = new Product(cartProductEntity.Product.Id, cartProductEntity.Product.Name, cartProductEntity.Product.Price, cartProductEntity.Quantity);
             return product;
         }
 
-        public static CartProductRecord MapToCartProductRecord(Guid cartId, Product product)
+        public static EntityModels.CartProduct MapToCartProductEntity(Guid cartId, Product product)
         {
             if (product == null)
             {
                 return null;
             }
 
-            return new CartProductRecord
+            return new EntityModels.CartProduct
             {
                 CartId = cartId,
                 ProductId = product.Id,

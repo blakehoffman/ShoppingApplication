@@ -2,180 +2,101 @@
 using Domain.Models.Cart;
 using Domain.Repositories;
 using Domain.UnitOfWork;
+using Infrastructure.Contexts;
 using Infrastructure.Mappings;
-using Infrastructure.Records;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
     public class CartRepository : ICartRepository
     {
+        private readonly ApplicationDbContext _applicationDbContext;
         private readonly IUnitOfWork _unitOfWork;
 
-        public CartRepository(IUnitOfWork unitOfWork)
+        public CartRepository(ApplicationDbContext applicationDbContext, IUnitOfWork unitOfWork)
         {
+            _applicationDbContext = applicationDbContext;
             _unitOfWork = unitOfWork;
         }
 
-        public void Add(Cart cart)
+        public async Task Add(Cart cart)
         {
-            var storedProc = "InsertCart";
-            var cartRecord = CartMapper.MapToCartRecord(cart);
-
-            _unitOfWork.Connection.Execute(
-                storedProc,
-                cartRecord,
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure);
-
-            storedProc = "InsertCartProduct";
-
+            var cartEntity = CartMapper.MapToCartEntity(cart);
+            
             foreach (var cartProduct in cart.Products)
             {
-                var cartProductRecord = CartMapper.MapToCartProductRecord(cart.Id, cartProduct);
-
-                _unitOfWork.Connection.Execute(
-                    storedProc,
-                    cartProductRecord,
-                    _unitOfWork.Transaction,
-                    commandType: CommandType.StoredProcedure);
+                var cartProductEntity = CartMapper.MapToCartProductEntity(cartEntity.Id, cartProduct);
+                cartEntity.Products.Add(cartProductEntity);
             }
+
+            _applicationDbContext.Carts.Add(cartEntity);
+            await _applicationDbContext.SaveChangesAsync();
         }
 
-        public Cart Find(Guid id)
+        public async Task<Cart> Find(Guid id)
         {
-            var storedProc = "GetCart";
-            CartRecord cartRecord;
+            var cartEntity = await _applicationDbContext.Carts
+                .Include(cart => cart.Products)
+                .ThenInclude(cartProduct => cartProduct.Product)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(cart => cart.Id == id);
 
-            cartRecord = _unitOfWork.Connection.Query<CartRecord>(
-                storedProc,
-                new { id },
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)
-                .FirstOrDefault();
+            return CartMapper.MapToCart(cartEntity);
+        }
 
-            if (cartRecord == null)
+        public async Task<Cart> FindByUserId(string userId)
+        {
+            var cartEntity = await _applicationDbContext.Carts
+                .Include(cart => cart.Products)
+                .ThenInclude(cartProduct => cartProduct.Product)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(cart => cart.UserId == new Guid(userId));
+
+            return CartMapper.MapToCart(cartEntity);
+        }
+
+        public async Task Update(Cart cart)
+        {
+            var cartEntity = await _applicationDbContext.Carts
+                .Include(cart => cart.Products)
+                .ThenInclude(cartProduct => cartProduct.Product)
+                .FirstOrDefaultAsync(cart => cart.Id == cart.Id);
+
+            cartEntity.Purchased = cart.Purchased;
+
+            //remove any that were deleted
+            foreach (var cartProductEntity in cartEntity.Products)
             {
-                return null;
-            }
-
-            List<CartProductRecord> cartProductRecords;
-            storedProc = "GetCartProducts";
-
-            cartProductRecords = _unitOfWork.Connection.Query<CartProductRecord>(
-                storedProc,
-                new { id },
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)
-                .ToList();
-
-            List<Product> products = new List<Product>();
-            storedProc = "GetProduct";
-
-            foreach (var cartProductRecord in cartProductRecords)
-            {
-                ProductRecord productRecord;
-
-                productRecord = _unitOfWork.Connection.Query<ProductRecord>(
-                    storedProc,
-                    new { Id = cartProductRecord.ProductId },
-                    _unitOfWork.Transaction,
-                    commandType: CommandType.StoredProcedure)
-                    .FirstOrDefault();
-
-                var product = CartMapper.MapToCartProduct(cartProductRecord, productRecord);
-                
-                if (product != null)
+                if (!cart.Products.Any(cartProduct => cartProduct.Id == cartProductEntity.ProductId))
                 {
-                    products.Add(product);
+                    cartEntity.Products.Remove(cartProductEntity);
                 }
             }
 
-            return CartMapper.MapToCart(cartRecord, products);
-        }
-
-        public Cart FindByUserId(string userId)
-        {
-            var storedProc = "GetCartByUserId";
-            CartRecord cartRecord;
-
-            cartRecord = _unitOfWork.Connection.Query<CartRecord>(
-                storedProc,
-                new { userId },
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)
-                .FirstOrDefault();
-
-            if (cartRecord == null)
-            {
-                return null;
-            }
-
-            List<CartProductRecord> cartProductRecords;
-            storedProc = "GetCartProducts";
-
-            cartProductRecords = _unitOfWork.Connection.Query<CartProductRecord>(
-                storedProc,
-                new { cartRecord.Id },
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure)
-                .ToList();
-
-            List<Product> products = new List<Product>();
-            storedProc = "GetProduct";
-
-            foreach (var cartProductRecord in cartProductRecords)
-            {
-                ProductRecord productRecord;
-
-                productRecord = _unitOfWork.Connection.Query<ProductRecord>(
-                    storedProc,
-                    new { Id = cartProductRecord.ProductId },
-                    _unitOfWork.Transaction,
-                    commandType: CommandType.StoredProcedure)
-                    .FirstOrDefault();
-
-                var product = CartMapper.MapToCartProduct(cartProductRecord, productRecord);
-                
-                if (product != null)
-                {
-                    products.Add(product);
-                }
-            }
-
-            return CartMapper.MapToCart(cartRecord, products);
-        }
-
-        public void Update(Cart cart)
-        {
-            var storedProc = "UpdateCart";
-
-            _unitOfWork.Connection.Execute(storedProc,
-                new { CartId = cart.Id, Purchased = cart.Purchased },
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure);
-
-            storedProc = "DeleteCartProducts";
-
-            _unitOfWork.Connection.Execute(storedProc,
-                new { cart.Id },
-                _unitOfWork.Transaction,
-                commandType: CommandType.StoredProcedure);
-
-            storedProc = "InsertCartProduct";
 
             foreach (var cartProduct in cart.Products)
             {
-                var cartProductRecord = CartMapper.MapToCartProductRecord(cart.Id, cartProduct);
+                var cartProductEntity = cartEntity.Products.FirstOrDefault(cpe => cpe.ProductId == cartProduct.Id);
 
-                _unitOfWork.Connection.Execute(storedProc,
-                    cartProductRecord,
-                    _unitOfWork.Transaction,
-                    commandType: CommandType.StoredProcedure);
+                //add new product to cart
+                if (cartProductEntity == null)
+                {
+                    var newCartProductEntity = CartMapper.MapToCartProductEntity(cart.Id, cartProduct);
+                    cartEntity.Products.Add(newCartProductEntity);
+                }
+                //update product in cart
+                else
+                {
+                    cartProductEntity.Quantity = cartProduct.Quantity;
+                }
             }
+
+            await _applicationDbContext.SaveChangesAsync();
         }
     }
 }

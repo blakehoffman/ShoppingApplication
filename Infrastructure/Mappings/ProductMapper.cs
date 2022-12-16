@@ -1,5 +1,4 @@
 ﻿using Domain.Models.Product;
-using Infrastructure.Records;
 using EntityModels = Infrastructure.Models;
 
 namespace Infrastructure.Mappings
