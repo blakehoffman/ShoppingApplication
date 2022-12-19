@@ -1,13 +1,10 @@
-﻿using Dapper;
-using Domain.Models.Cart;
+﻿using Domain.Models.Cart;
 using Domain.Repositories;
 using Domain.UnitOfWork;
 using Infrastructure.Contexts;
 using Infrastructure.Mappings;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -70,7 +67,7 @@ namespace Infrastructure.Repositories
             cartEntity.Purchased = cart.Purchased;
 
             //remove any that were deleted
-            foreach (var cartProductEntity in cartEntity.Products)
+            foreach (var cartProductEntity in cartEntity.Products.ToList())
             {
                 if (!cart.Products.Any(cartProduct => cartProduct.Id == cartProductEntity.ProductId))
                 {

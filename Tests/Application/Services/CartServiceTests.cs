@@ -10,6 +10,7 @@ using KellermanSoftware.CompareNetObjects;
 using Xunit;
 using Domain.UnitOfWork;
 using ProductModel = Domain.Models.Product.Product;
+using System.Threading.Tasks;
 
 namespace Tests.Application.Services
 {
@@ -29,12 +30,12 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void AddProductToCart()
+        public async Task AddProductToCart()
         {
             var productID = Guid.NewGuid();
 
             _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
-                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
+                .ReturnsAsync(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .ReturnsAsync(new ProductModel(productID, "test product", "description", Guid.NewGuid(), 3));
@@ -49,7 +50,7 @@ namespace Tests.Application.Services
 
             var expected = new ResultDTO { Succeeded = true };
 
-            var actual = cartService.AddProductToCart("user", Guid.NewGuid(), cartProductDTO);
+            var actual = await cartService.AddProductToCart("user", Guid.NewGuid(), cartProductDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -57,7 +58,7 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void AddProductToCart_NoUser_Error()
+        public async Task AddProductToCart_NoUser_Error()
         {
             var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
@@ -69,7 +70,7 @@ namespace Tests.Application.Services
                 Errors = { "Can't add to a cart when user is not logged in" }
             };
 
-            var actual = cartService.AddProductToCart("", Guid.NewGuid(), cartProductDTO);
+            var actual = await cartService.AddProductToCart("", Guid.NewGuid(), cartProductDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -77,12 +78,12 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void AddProductToCart_QuantityLessThan1_Error()
+        public async Task AddProductToCart_QuantityLessThan1_Error()
         {
             var productID = Guid.NewGuid();
 
             _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
-                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
+                .ReturnsAsync(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .ReturnsAsync(new ProductModel(productID, "test product", "description", Guid.NewGuid(), 3));
@@ -101,7 +102,7 @@ namespace Tests.Application.Services
                 Errors = { "Quantity must be greater than 0" }
             };
 
-            var actual = cartService.AddProductToCart("user", Guid.NewGuid(), cartProductDTO);
+            var actual = await cartService.AddProductToCart("user", Guid.NewGuid(), cartProductDTO);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -109,19 +110,19 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateCart()
+        public async Task CreateCart()
         {
             _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
-                .Returns((Cart)null);
+                .ReturnsAsync((Cart)null);
 
             _cartRepositoryMock.Setup(cartRepository => cartRepository.Find(It.IsAny<Guid>()))
-                .Returns((Cart)null);
+                .ReturnsAsync((Cart)null);
 
             var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
             var expected = new ResultDTO { Succeeded = true };
 
-            var actual = cartService.CreateCart("User", Guid.NewGuid());
+            var actual = await cartService.CreateCart("User", Guid.NewGuid());
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -129,13 +130,13 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateCart_DuplicateCartId_Error()
+        public async Task CreateCart_DuplicateCartId_Error()
         {
             _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
-                .Returns((Cart)null);
+                .ReturnsAsync((Cart)null);
 
             _cartRepositoryMock.Setup(cartRepository => cartRepository.Find(It.IsAny<Guid>()))
-                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
+                .ReturnsAsync(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
 
             var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
@@ -145,7 +146,7 @@ namespace Tests.Application.Services
                 Errors = { "A cart with this Id already exists" }
             };
 
-            var actual = cartService.CreateCart("User", Guid.NewGuid());
+            var actual = await cartService.CreateCart("User", Guid.NewGuid());
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -153,7 +154,7 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateCart_NoUserError()
+        public async Task CreateCart_NoUserError()
         {
             var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
@@ -163,7 +164,7 @@ namespace Tests.Application.Services
                 Errors = { "Can't create a cart when user is not logged in" }
             };
 
-            var actual = cartService.CreateCart("", Guid.NewGuid());
+            var actual = await cartService.CreateCart("", Guid.NewGuid());
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -171,10 +172,10 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void CreateCart_UserAlreadyHasCart_Error()
+        public async Task CreateCart_UserAlreadyHasCart_Error()
         {
             _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
-                .Returns(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
+                .ReturnsAsync(new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow));
 
             var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
@@ -184,7 +185,7 @@ namespace Tests.Application.Services
                 Errors = { "Can't create a new cart when user already has one" }
             };
 
-            var actual = cartService.CreateCart("User", Guid.NewGuid());
+            var actual = await cartService.CreateCart("User", Guid.NewGuid());
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -192,14 +193,14 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void DeleteProductFromCart()
+        public async Task DeleteProductFromCart()
         {
             var productID = Guid.NewGuid();
             var userCart = new Cart(Guid.NewGuid(), "UserId", DateTimeOffset.UtcNow);
             userCart.AddItem(new Product(productID, "test product", 25, 1));
 
             _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
-                .Returns(userCart);
+                .ReturnsAsync(userCart);
 
             _productRepositoryMock.Setup(productRepository => productRepository.Find(It.IsAny<Guid>()))
                 .ReturnsAsync(new ProductModel(productID, "test product", "description", Guid.NewGuid(), 25));
@@ -208,7 +209,7 @@ namespace Tests.Application.Services
 
             var expected = new ResultDTO { Succeeded = true };
 
-            var actual = cartService.DeleteProductFromCart("user", productID);
+            var actual = await cartService.DeleteProductFromCart("user", productID);
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);
@@ -216,7 +217,7 @@ namespace Tests.Application.Services
         }
 
         [Fact]
-        public void DeleteProductFromCart_NoUser_Error()
+        public async Task DeleteProductFromCart_NoUser_Error()
         {
             var cartService = new CartService(_cartRepositoryMock.Object, _mapperMock.Object, _productRepositoryMock.Object, _unitOfWorkMock.Object);
 
@@ -226,7 +227,7 @@ namespace Tests.Application.Services
                 Errors = { "Can't edit a cart when user isn't signed in" }
             };
 
-            var actual = cartService.DeleteProductFromCart("", Guid.NewGuid());
+            var actual = await cartService.DeleteProductFromCart("", Guid.NewGuid());
 
             var compareLogic = new CompareLogic();
             var result = compareLogic.Compare(expected, actual);

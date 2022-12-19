@@ -8,7 +8,7 @@ namespace Infrastructure.EntityConfiguration
     {
         public void Configure(EntityTypeBuilder<OrderProduct> builder)
         {
-            builder.HasKey(orderProduct => orderProduct.ClusterId);
+            builder.HasKey(orderProduct => new { orderProduct.OrderId, orderProduct.ProductId });
             
             builder
                 .Property(orderProduct => orderProduct.ClusterId)

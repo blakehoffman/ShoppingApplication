@@ -22,11 +22,11 @@ namespace Application.Controllers
         }
 
         [HttpGet("me")]
-        public ActionResult<CartDTO> GetCart()
+        public async Task<ActionResult<CartDTO>> GetCart()
         {
             var user = this.User.Identity as ClaimsIdentity;
             var userId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var cart = _cartService.GetCart(userId);
+            var cart = await _cartService.GetCart(userId);
 
             if (cart == null)
             {
@@ -57,21 +57,21 @@ namespace Application.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ResultDTO> CreateCart([FromBody] Guid cartId)
+        public async Task<ActionResult<ResultDTO>> CreateCart([FromBody] Guid cartId)
         {
             var user = this.User.Identity as ClaimsIdentity;
             var userId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var result = _cartService.CreateCart(userId, cartId);
+            var result = await _cartService.CreateCart(userId, cartId);
 
             return result;
         }
 
         [HttpDelete("{cartId}/products/{productId}")]
-        public ActionResult<ResultDTO> DeleteProductFromCart(Guid cartId, Guid productId)
+        public async Task<ActionResult<ResultDTO>> DeleteProductFromCart(Guid cartId, Guid productId)
         {
             var user = this.User.Identity as ClaimsIdentity;
             var userId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var result = _cartService.DeleteProductFromCart(userId, productId);
+            var result = await _cartService.DeleteProductFromCart(userId, productId);
 
             if (result == null)
             {

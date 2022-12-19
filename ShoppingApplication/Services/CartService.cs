@@ -40,7 +40,7 @@ namespace Application.Services
                 };
             }
 
-            var userCart = _cartRepository.FindByUserId(userId);
+            var userCart = await _cartRepository.FindByUserId(userId);
 
             if (userCart == null)
             {
@@ -72,7 +72,7 @@ namespace Application.Services
             try
             {
                 _unitOfWork.Begin();
-                _cartRepository.Update(userCart);
+                await _cartRepository.Update(userCart);
                 _unitOfWork.Commit();
 
                 resultDTO.Succeeded = true;
@@ -86,7 +86,7 @@ namespace Application.Services
             return resultDTO;
         }
 
-        public ResultDTO CreateCart(string userId, Guid cartGuid)
+        public async Task<ResultDTO> CreateCart(string userId, Guid cartGuid)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -97,7 +97,7 @@ namespace Application.Services
                 };
             }
 
-            var usersExistingCart = _cartRepository.FindByUserId(userId);
+            var usersExistingCart = await _cartRepository.FindByUserId(userId);
 
             if (usersExistingCart != null)
             {
@@ -108,7 +108,7 @@ namespace Application.Services
                 };
             }
 
-            var existingCartWithId = _cartRepository.Find(cartGuid);
+            var existingCartWithId = await _cartRepository.Find(cartGuid);
 
             if (existingCartWithId != null)
             {
@@ -120,12 +120,12 @@ namespace Application.Services
             }
 
             var cart = new Cart(cartGuid, userId, DateTimeOffset.UtcNow);
-            _cartRepository.Add(cart);
+            await _cartRepository.Add(cart);
 
             return new ResultDTO { Succeeded = true };
         }
 
-        public ResultDTO DeleteProductFromCart(string userId, Guid productId)
+        public async Task<ResultDTO> DeleteProductFromCart(string userId, Guid productId)
         {
             if (string.IsNullOrEmpty(userId))
             {
@@ -136,7 +136,7 @@ namespace Application.Services
                 };
             }
 
-            var userCart = _cartRepository.FindByUserId(userId);
+            var userCart = await _cartRepository.FindByUserId(userId);
 
             if (userCart == null)
             {
@@ -151,19 +151,19 @@ namespace Application.Services
             }
 
             userCart.RemoveItem(productId);
-            _cartRepository.Update(userCart);
+            await _cartRepository.Update(userCart);
 
             return new ResultDTO { Succeeded = true };
         }
 
-        public CartDTO GetCart(string userId)
+        public async Task<CartDTO> GetCart(string userId)
         {
             if (string.IsNullOrEmpty(userId))
             {
                 return null;
             }
 
-            var cart = _cartRepository.FindByUserId(userId);
+            var cart = await _cartRepository.FindByUserId(userId);
             return _mapper.Map<CartDTO>(cart);
         }
     }

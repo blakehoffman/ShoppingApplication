@@ -99,12 +99,12 @@ namespace Application.Services
                 _unitOfWork.Begin();
 
                 await _orderRepository.Add(order);
-                var cart = _cartRepository.FindByUserId(userID);
+                var cart = await _cartRepository.FindByUserId(userID);
 
                 if (cart != null)
                 {
                     cart.Purchased = true;
-                    _cartRepository.Update(cart);
+                    await _cartRepository.Update(cart);
                 }
 
                 //_unitOfWork.Commit();

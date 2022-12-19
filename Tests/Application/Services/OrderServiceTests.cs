@@ -45,7 +45,7 @@ namespace Tests.Application.Services
                 .ReturnsAsync(new ProductModel(Guid.NewGuid(), "test", "description", Guid.NewGuid(), 25));
 
             _cartRepositoryMock.Setup(cartRepository => cartRepository.FindByUserId(It.IsAny<string>()))
-                .Returns((Cart)null);
+                .ReturnsAsync((Cart)null);
 
             var orderService = new OrderService(
                 _cartRepositoryMock.Object,
