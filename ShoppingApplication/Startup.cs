@@ -3,11 +3,9 @@ using Application.Services;
 using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.Repositories;
-using Domain.UnitOfWork;
 using Infrastructure.Contexts;
 using Infrastructure.Records;
 using Infrastructure.Repositories;
-using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -73,8 +71,6 @@ namespace Application
             services.AddScoped<IOrderRepository, OrderRepository>();
 
             services.AddScoped<IProductRepository, ProductRepository>();
-
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             //For identity
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
